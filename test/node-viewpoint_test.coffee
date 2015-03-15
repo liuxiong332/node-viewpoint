@@ -1,5 +1,5 @@
 
-nodeViewpoint = require('../')
+nodeViewpoint = require('../lib/node-viewpoint')
 assert = require('should')
 
 describe 'nodeViewpoint', ->

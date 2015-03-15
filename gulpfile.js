@@ -40,7 +40,7 @@ gulp.task('coffeelint', function () {
     .pipe(plugins.coffeelint.reporter());
 });
 
-gulp.task('istanbul', function (cb) {
+gulp.task('istanbul', ['coffee'], function (cb) {
   gulp.src(paths.source)
     .pipe(plugins.istanbul()) // Covering files
     .pipe(plugins.istanbul.hookRequire()) // Force `require` to return covered files
