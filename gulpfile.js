@@ -4,10 +4,12 @@ var gulp   = require('gulp');
 var plugins = require('gulp-load-plugins')();
 
 var paths = {
-  lint: ['./gulpfile.js', './lib/**/*.js'],
+  jslint: ['./gulpfile.js', './lib/**/*.js'],
+  coffeelint: ['./lib/**/*.coffee'],
   watch: ['./gulpfile.js', './lib/**', './test/**/*.js', '!test/{temp,temp/**}'],
-  tests: ['./test/**/*.js', '!test/{temp,temp/**}'],
-  source: ['./lib/*.js']
+  tests: ['./out/test/**/*.js', '!out/test/{temp,temp/**}'],
+  source: ['./out/lib/*.js'],
+  coffee: ['./lib/**/*.coffee', './test/**/*.coffee'],
 };
 
 var plumberConf = {};
@@ -18,12 +20,24 @@ if (process.env.CI) {
   };
 }
 
-gulp.task('lint', function () {
-  return gulp.src(paths.lint)
+gulp.task('coffee', function () {
+  return gulp.src(paths.coffee, {base: '.'})
+    .pipe(plugins.coffee({bare: true})).on('error', plugins.util.log)
+    .pipe(gulp.dest('./out'));
+});
+
+gulp.task('jslint', function () {
+  return gulp.src(paths.jslint)
     .pipe(plugins.jshint('.jshintrc'))
     .pipe(plugins.plumber(plumberConf))
     .pipe(plugins.jscs())
     .pipe(plugins.jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('coffeelint', function () {
+  return gulp.src(paths.coffeelint)
+    .pipe(plugins.coffeelint())
+    .pipe(plugins.coffeelint.reporter());
 });
 
 gulp.task('istanbul', function (cb) {
@@ -54,7 +68,8 @@ gulp.task('watch', ['test'], function () {
   gulp.watch(paths.watch, ['test']);
 });
 
-gulp.task('test', ['lint', 'istanbul']);
+gulp.task('lint', ['jslint', 'coffeelint']);
+gulp.task('test', ['lint', 'coffee', 'istanbul']);
 
 gulp.task('release', ['bump']);
 
