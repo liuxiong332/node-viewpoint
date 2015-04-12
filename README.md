@@ -1,5 +1,5 @@
-# node-viewpoint 
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-url]][daviddm-image] [![Coverage Status][coveralls-image]][coveralls-url]
+# node-viewpoint
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage Status][coveralls-image]][coveralls-url]
 
 the exchange API for nodejs module
 
@@ -30,7 +30,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## License
 
-Copyright (c) 2015 liuxiong332. Licensed under the MIT license.
+Copyright (c) 2015 liuxiong. Licensed under the MIT license.
 
 
 
@@ -38,7 +38,7 @@ Copyright (c) 2015 liuxiong332. Licensed under the MIT license.
 [npm-image]: https://badge.fury.io/js/node-viewpoint.svg
 [travis-url]: https://travis-ci.org/liuxiong332/node-viewpoint
 [travis-image]: https://travis-ci.org/liuxiong332/node-viewpoint.svg?branch=master
-[daviddm-url]: https://david-dm.org/liuxiong332/node-viewpoint.svg?theme=shields.io
-[daviddm-image]: https://david-dm.org/liuxiong332/node-viewpoint
+[daviddm-url]: https://david-dm.org/liuxiong332/node-viewpoint
+[daviddm-image]: https://david-dm.org/liuxiong332/node-viewpoint.svg?theme=shields.io
 [coveralls-url]: https://coveralls.io/r/liuxiong332/node-viewpoint
 [coveralls-image]: https://coveralls.io/repos/liuxiong332/node-viewpoint/badge.png

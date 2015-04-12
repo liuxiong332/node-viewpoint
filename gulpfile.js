@@ -2,14 +2,12 @@
 
 var gulp   = require('gulp');
 var plugins = require('gulp-load-plugins')();
+var CI = process.env.CI === 'true';
 
 var paths = {
-  jslint: ['./gulpfile.js', './lib/**/*.js'],
-  coffeelint: ['./lib/**/*.coffee'],
-  watch: ['./gulpfile.js', './lib/**', './test/**/*.js', '!test/{temp,temp/**}'],
-  tests: ['./out/test/**/*.js', '!out/test/{temp,temp/**}'],
-  source: ['./out/lib/*.js'],
-  coffee: ['./lib/**/*.coffee', './test/**/*.coffee'],
+  coffee: ['./lib/**/*.coffee'],
+  watch: ['./gulpfile.js', './lib/**', './spec/**', '!spec/{temp,temp/**}'],
+  tests: ['./spec/**/*.coffee', '!spec/{temp,temp/**}']
 };
 
 var plumberConf = {};
@@ -20,35 +18,21 @@ if (process.env.CI) {
   };
 }
 
-gulp.task('coffee', function () {
-  return gulp.src(paths.coffee, {base: '.'})
-    .pipe(plugins.coffee({bare: true})).on('error', plugins.util.log)
-    .pipe(gulp.dest('./out'));
-});
-
-gulp.task('jslint', function () {
-  return gulp.src(paths.jslint)
-    .pipe(plugins.jshint('.jshintrc'))
-    .pipe(plugins.plumber(plumberConf))
-    .pipe(plugins.jscs())
-    .pipe(plugins.jshint.reporter('jshint-stylish'));
-});
-
-gulp.task('coffeelint', function () {
-  return gulp.src(paths.coffeelint)
+gulp.task('lint', function () {
+  return gulp.src(paths.coffee)
     .pipe(plugins.coffeelint())
     .pipe(plugins.coffeelint.reporter());
 });
 
-gulp.task('istanbul', ['coffee'], function (cb) {
-  gulp.src(paths.source)
-    .pipe(plugins.istanbul()) // Covering files
-    .pipe(plugins.istanbul.hookRequire()) // Force `require` to return covered files
+gulp.task('istanbul', function (cb) {
+  gulp.src(paths.coffee)
+    .pipe(plugins.coffeeIstanbul()) // Covering files
+    .pipe(plugins.coffeeIstanbul.hookRequire()) // Force `require` to return covered files
     .on('finish', function () {
       gulp.src(paths.tests)
         .pipe(plugins.plumber(plumberConf))
-        .pipe(plugins.mocha())
-        .pipe(plugins.istanbul.writeReports()) // Creating the reports after tests runned
+        .pipe(plugins.mocha({reporter: CI ? 'spec' : 'nyan'}))
+        .pipe(plugins.coffeeIstanbul.writeReports()) // Creating the reports after tests runned
         .on('finish', function() {
           process.chdir(__dirname);
           cb();
@@ -68,9 +52,14 @@ gulp.task('watch', ['test'], function () {
   gulp.watch(paths.watch, ['test']);
 });
 
-gulp.task('lint', ['jslint', 'coffeelint']);
-gulp.task('test', ['lint', 'coffee', 'istanbul']);
+gulp.task('test', ['lint', 'istanbul']);
 
 gulp.task('release', ['bump']);
 
-gulp.task('default', ['test']);
+gulp.task('dist', function () {
+  return gulp.src(paths.coffee, {base: '.'})
+    .pipe(plugins.coffee({bare: true})).on('error', plugins.util.log)
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('default', ['test', 'dist']);
