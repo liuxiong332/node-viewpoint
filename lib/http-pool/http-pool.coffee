@@ -6,21 +6,27 @@ class HttpRequestPool
     @maxSize = maxSize ? 10
     @activeSize = 0
     @waitQueue = []
+    @inProcessQueue = []
 
   schedule: ->
     while @waitQueue.length > 0 and @activeSize < @maxSize
       task = @waitQueue.pop()
       task()
 
+  close: ->
+    @waitQueue = []
+    client.abort() for client in @inProcessQueue
+
   newRequest: (options, defer) ->
     ++ @activeSize
-    new HttpRequest options, (err, res) =>
+    client = new HttpRequest options, (err, res) =>
       if err
         defer.reject(err)
       else
         defer.resolve(res)
       -- @activeSize
       this.schedule()
+    @inProcessQueue.push client
 
   request = (method, url, options = {}) ->
     if typeof options is 'function'
