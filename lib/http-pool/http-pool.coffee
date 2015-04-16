@@ -8,41 +8,34 @@ class HttpRequestPool
     @waitQueue = []
 
   schedule: ->
-    count = Math.min @maxSize - @activeSize, @waitQueue.length
-    for i in [0...count]
+    while @waitQueue.length > 0 and @activeSize < @maxSize
       task = @waitQueue.pop()
       task()
 
-  createRequest: ->
+  newRequest: (options, defer) ->
     ++ @activeSize
     new HttpRequest options, (err, res) =>
+      if err
+        defer.reject(err)
+      else
+        defer.resolve(res)
       -- @activeSize
-      @schedule()
-      callback err, res
+      this.schedule()
 
-  _newRequest: (options, callback) ->
-    resolveRequest = (defer) ->
-      defer.resolve @createRequest()
+  request = (method, url, options = {}) ->
+    if typeof options is 'function'
+      callback = options
+      options = {}
+    options.url = url
+    options.method = method
 
     defer = Q.defer()
     if @activeSize + 1 > @maxSize
-      @waitQueue.push resolveRequest.bind(this, defer)
+      @waitQueue.push @newRequest.bind(this, options, defer)
     else
-      resolveRequest.call(this, defer)
+      @newRequest(options, defer)
     defer.promise
 
-  ['get', 'post', 'delete', 'put'].forEach (method) =>
-    @prototype[method] = (url, options = {}, callback) ->
-      if typeof options is 'function'
-        callback = options
-        options = {}
-      options.url = url
-      options.method = method.toUpperCase()
+  get: (url, options) -> request.call(this, 'GET')
+  post: (url, options) -> request.call(this, 'POST')
 
-      defer = Q.defer()
-      @_newRequest(options, callback).then (client) ->
-        if options.requestMode is 'stream'
-          defer.resolve client.getInputStream()
-        else
-          defer.resolve client
-      defer.promise
