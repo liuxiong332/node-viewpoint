@@ -1,6 +1,8 @@
 Builder = require 'libxmljs-builder'
 _ = require 'underscore'
 
+pascalCase = (str) -> str[0].toUpperCase() + str.slice(1)
+
 module.exports =
 class EwsBuilder
   @build: (bodyCallback) ->
@@ -13,7 +15,7 @@ class EwsBuilder
     NS_T = EwsBuilder.NS_TYPES
     builder.nodeNS EwsBuilder.NS_MESSAGES, 'ItemShape', (builder) =>
       if itemShape.baseShape?
-        builder.nodeNS NS_T, 'BaseShape', itemShape.baseShape
+        builder.nodeNS NS_T, 'BaseShape', pascalCase itemShape.baseShape
 
       iMC = itemShape.includeMimeContent
       builder.nodeNS NS_T, 'IncludeMimeContent', iMC.toString() if iMC?

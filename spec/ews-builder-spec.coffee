@@ -17,7 +17,7 @@ describe 'EwsBuilder', ->
 
   it '@buildItemShape', ->
     itemShape =
-      baseShape: 'IdOnly'
+      baseShape: 'idOnly'
       includeMimeContent: true
       bodyType: 'html'
 
