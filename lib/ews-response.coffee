@@ -1,17 +1,13 @@
-Builder = require 'libxmljs-builder'
 _ = require 'underscore'
-NS = require './ews-ns'
-
-pascalCase = (str) -> str[0].toUpperCase() + str.slice(1)
 
 module.exports =
-class EwsBuilder
+class EwsResponse
   # * `bodyCallback` {Function} to build children nodes
   @build: (bodyCallback) ->
     @builder = new Builder
-    @builder.defineNS NS.NAMESPACES
-    @builder.rootNS NS.NS_SOAP, 'Envelope', (builder) ->
-      builder.nodeNS NS.NS_SOAP, 'Body', bodyCallback
+    @builder.defineNS EwsBuilder.NAMESPACES
+    @builder.rootNS EwsBuilder.NS_SOAP, 'Envelope', (builder) ->
+      builder.nodeNS EwsBuilder.NS_SOAP, 'Body', bodyCallback
 
   # * `itemShape` {Object} the ItemShape parameters
   #   * `baseShape` {String} can be `idOnly` or `default` or `allProperties`
@@ -19,8 +15,8 @@ class EwsBuilder
   #   * `bodyType` (optional) {String}  `html` or `text` or `best`
   # * `builder` {ChildrenBuilder}
   @itemShape: (itemShape, builder) ->
-    NS_T = NS.NS_TYPES
-    builder.nodeNS NS.NS_MESSAGES, 'ItemShape', (builder) =>
+    NS_T = EwsBuilder.NS_TYPES
+    builder.nodeNS EwsBuilder.NS_MESSAGES, 'ItemShape', (builder) =>
       if itemShape.baseShape?
         builder.nodeNS NS_T, 'BaseShape', pascalCase itemShape.baseShape
 
@@ -37,8 +33,8 @@ class EwsBuilder
   @parentFolderIds: (folderIds, builder) ->
     folderIds = [folderIds] unless _.isArray folderIds
 
-    NS_T = NS.NS_TYPES
-    builder.nodeNS NS.NS_MESSAGES, 'ParentFolderIds', (builder) ->
+    NS_T = EwsBuilder.NS_TYPES
+    builder.nodeNS EwsBuilder.NS_MESSAGES, 'ParentFolderIds', (builder) ->
       for fid in folderIds
         params = {Id: fid.id, ChangeKey: fid.changeKey}
         if fid.type is 'distinguished'
@@ -63,3 +59,11 @@ class EwsBuilder
       when 'text' then 'Text'
       when 'best' then 'Best'
       else bodyType
+
+  @NS_SOAP: 'soap'
+  @NS_TYPES: 't'
+  @NS_MESSAGES: 'm'
+  @NAMESPACES:
+    soap: 'http://schemas.xmlsoap.org/soap/envelope/'
+    t: 'http://schemas.microsoft.com/exchange/services/2006/types'
+    m: 'http://schemas.microsoft.com/exchange/services/2006/messages'

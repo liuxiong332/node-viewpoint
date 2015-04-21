@@ -20,7 +20,7 @@
     "http-ext": "^0.2.15",
     "http-ext-ntlm": "^0.1.3",
     "libxmljs": "^0.13.0",
-    "libxmljs-builder": "^0.1.4",
+    "libxmljs-builder": "^0.2.1",
     "q": "latest",
     "underscore": "^1.8.3"
   },
