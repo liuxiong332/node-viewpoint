@@ -1,69 +1,33 @@
 _ = require 'underscore'
+{NAMESPACES} = require './ews-ns'
+
+class RootFolder
+  constructor: (@node) ->
+
+  totalItemsInView: ->
+    parseInt @node.attrVal('TotalItemsInView')
+
+  includesLastItemInRange: ->
+    @node.attrVal('IncludesLastItemInRange') is 'true'
+
+  items: ->
+    @node.get('/t:Items', NAMESPACES)
 
 module.exports =
 class EwsResponse
-  # * `bodyCallback` {Function} to build children nodes
-  @build: (bodyCallback) ->
-    @builder = new Builder
-    @builder.defineNS EwsBuilder.NAMESPACES
-    @builder.rootNS EwsBuilder.NS_SOAP, 'Envelope', (builder) ->
-      builder.nodeNS EwsBuilder.NS_SOAP, 'Body', bodyCallback
+  constructor: (@doc) ->
+    resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
+    _msgNode = resMsgs.childNodes[0]
+    @status = _msgNode.attrVal('ResponseClass') is 'Success'
+    unless @status
+      @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
+      @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
+    @msgChildren = _msgNode.childNodes
 
-  # * `itemShape` {Object} the ItemShape parameters
-  #   * `baseShape` {String} can be `idOnly` or `default` or `allProperties`
-  #   * `includeMimeContent` (optional) {Bool}
-  #   * `bodyType` (optional) {String}  `html` or `text` or `best`
-  # * `builder` {ChildrenBuilder}
-  @itemShape: (itemShape, builder) ->
-    NS_T = EwsBuilder.NS_TYPES
-    builder.nodeNS EwsBuilder.NS_MESSAGES, 'ItemShape', (builder) =>
-      if itemShape.baseShape?
-        builder.nodeNS NS_T, 'BaseShape', pascalCase itemShape.baseShape
+    responseMessages: ->
+      for node in @msgChildren
+        nodeName = node.name()
+        continue if nodeName is 'ResponseCode'
+        new EwsResponse[nodeName](node)
 
-      iMC = itemShape.includeMimeContent
-      builder.nodeNS NS_T, 'IncludeMimeContent', iMC.toString() if iMC?
-
-      if (bodyType = itemShape.bodyType)?
-        builder.nodeNS NS_T, 'BodyType', @convertBodyType(itemShape.bodyType)
-
-  # * `folderIds` {Array} or `Object`
-  #   every item of `folderIds` is `Object`, for distinguished folderId,
-  #   just like {id: <myId>, changeKey: <key>, type: 'distinguished'},
-  #   for folderId, the `type` should be ignore
-  @parentFolderIds: (folderIds, builder) ->
-    folderIds = [folderIds] unless _.isArray folderIds
-
-    NS_T = EwsBuilder.NS_TYPES
-    builder.nodeNS EwsBuilder.NS_MESSAGES, 'ParentFolderIds', (builder) ->
-      for fid in folderIds
-        params = {Id: fid.id, ChangeKey: fid.changeKey}
-        if fid.type is 'distinguished'
-          builder.nodeNS NS_T, 'DistinguishedFolderId', params
-        else
-          builder.nodeNS NS_T, 'FolderId', params
-
-  # * `viewOpts` {Object}
-  #   * `maxReturned` {Number}
-  #   * `offset` {Number}
-  #   * `basePoint` {String} 'beginning' or 'end'
-  @indexedPageItemView: (viewOpts, builder) ->
-    params =
-      MaxEntriesReturned: viewOpts.maxReturned
-      Offset: viewOpts.offset.toString()
-      BasePoint: pascalCase(viewOpts.basePoint)
-    builder.nodeNS EwsBuilder.NS_TYPES, 'IndexedPageViewItemView', params
-
-  @convertBodyType: (body) ->
-    switch body
-      when 'html' then 'HTML'
-      when 'text' then 'Text'
-      when 'best' then 'Best'
-      else bodyType
-
-  @NS_SOAP: 'soap'
-  @NS_TYPES: 't'
-  @NS_MESSAGES: 'm'
-  @NAMESPACES:
-    soap: 'http://schemas.xmlsoap.org/soap/envelope/'
-    t: 'http://schemas.microsoft.com/exchange/services/2006/types'
-    m: 'http://schemas.microsoft.com/exchange/services/2006/messages'
+    @RootFolder: RootFolder
