@@ -11,23 +11,25 @@ class RootFolder
     @node.attrVal('IncludesLastItemInRange') is 'true'
 
   items: ->
-    @node.get('/t:Items', NAMESPACES)
+    @node.get('t:Items', NAMESPACES)
 
 module.exports =
 class EwsResponse
   constructor: (@doc) ->
     resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
-    _msgNode = resMsgs.childNodes[0]
+    console.log @doc.get('//m:FindItemResponseMessage', NAMESPACES).name()
+
+    _msgNode = resMsgs.child(0)
     @status = _msgNode.attrVal('ResponseClass') is 'Success'
     unless @status
       @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
-    @msgChildren = _msgNode.childNodes
+    @msgChildren = _msgNode.childNodes()
 
-    responseMessages: ->
-      for node in @msgChildren
-        nodeName = node.name()
-        continue if nodeName is 'ResponseCode'
-        new EwsResponse[nodeName](node)
+  responseMessages: ->
+    for node in @msgChildren
+      nodeName = node.name()
+      continue if nodeName is 'ResponseCode'
+      new EwsResponse[nodeName](node)
 
-    @RootFolder: RootFolder
+  this.RootFolder = RootFolder
