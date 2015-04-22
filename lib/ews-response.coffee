@@ -17,7 +17,6 @@ module.exports =
 class EwsResponse
   constructor: (@doc) ->
     resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
-    console.log @doc.get('//m:FindItemResponseMessage', NAMESPACES).name()
 
     _msgNode = resMsgs.child(0)
     @status = _msgNode.attrVal('ResponseClass') is 'Success'

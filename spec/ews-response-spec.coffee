@@ -27,5 +27,4 @@ describe 'EwsResponse', ->
     resMsgs.length.should.equal 1
     resMsgs[0].totalItemsInView().should.equal 10
     resMsgs[0].includesLastItemInRange().should.equal true
-    console.log resMsgs[0].items()
     resMsgs[0].items().should.ok

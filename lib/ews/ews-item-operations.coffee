@@ -4,7 +4,7 @@ EwsBuilder = require '../ews-builder'
 module.exports =
 class EWSItemOperations
 
-  buildFindItem: (opts) ->
+  buildFindItem: (opts = {}) ->
     EwsBuilder.build (builder) ->
       traversal = opts['traversal'] ? 'Shallow'
       builder.nodeNS NS_MESSAGES, 'FindItem', Traversal: traversal, (builder) ->
