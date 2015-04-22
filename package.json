@@ -21,6 +21,7 @@
     "http-ext-ntlm": "^0.1.3",
     "libxmljs": "^0.13.0",
     "libxmljs-builder": "^0.2.1",
+    "mixto": "^1.0.0",
     "q": "latest",
     "underscore": "^1.8.3"
   },

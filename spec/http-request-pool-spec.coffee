@@ -1,6 +1,6 @@
 should = require 'should'
 sinon = require 'sinon'
-HttpRequestPool = require '../lib/http-request-pool'
+HttpRequestPool = require '../lib/http/http-request-pool'
 Q = require 'q'
 
 describe 'HttpRequestPool', ->

@@ -1,8 +1,7 @@
 Builder = require 'libxmljs-builder'
 _ = require 'underscore'
 NS = require './ews-ns'
-
-pascalCase = (str) -> str[0].toUpperCase() + str.slice(1)
+{pascalCase} = require './ews-util'
 
 module.exports =
 class EwsBuilder
