@@ -29,6 +29,10 @@ class Attachment
   message: ->
     @getChildNode 'message'
 
+  content: ->
+    contentNode = @getChildNode 'content'
+    new Buffer(contentNode.text()).toString('base64') if contentNode
+
   # `name` is attachment name,
   # `contentType` is the MIME type of content
   # `contentId` is the user defined content
