@@ -4,19 +4,22 @@ Mixin = require 'mixto'
 
 module.exports =
 class TypeMixin extends Mixin
-  getByName = (node, methodName) ->
-    node.get "t:#{pascalCase(methodName)}", NAMESPACES
 
+  getChildNode: (methodName) ->
+    @node.get "t:#{pascalCase(methodName)}", NAMESPACES
+
+  # add methods into the class by analyze the DOM textContent
   @addTextMethods: (methods...) ->
-    for methodName in methods
+    methods.forEach (methodName) =>
       @prototype[methodName] = ->
-        element = getByName(@node, methodName)
+        element = @getChildNode(methodName)
         element.text() if element
 
+  # add methods into the class by analyze the DOM attributes and textContent
   @addAttrMethods: (methods...) ->
-    for methodName in methods
+    methods.forEach (methodName) =>
       @prototype[methodName] = ->
-        element = getByName(@node, methodName)
+        element = @getChildNode(methodName)
         return null unless element
         res = {}
         for attrKey, attrVal of element.attrVals()
