@@ -1,22 +1,55 @@
 {pascalCase} = require 'ews-util'
 TypeMixin = require './type-mixin'
+Attachment = require './attachment'
 
 class Item
   TypeMixin.includeInto this
+
+  @addBoolTextMethods: (methods...) ->
+    methods.forEach (methodName) =>
+      @prototype[methodName] = -> @getChildBoolValue(methodName)
+
   constructor: (@node) ->
 
-  itemId: ->
-    itemIdNode = @node.get('ItemId')
-    return null unless itemIdNode?
-    id = itemIdNode.attrVal('Id')
-    changeKey = itemIdNode.attrVal('ChangeKey')
-    {id, changeKey}
+  mimeContent: ->
+    element = @getChildNode('mimeContent')
+    if element
+      characterSet = element.attrVal 'CharacterSet'
+      content = new Buffer(element.text()).toString('base64')
+      {characterSet, content}
 
+  # `return` {bodyType: 'html' or 'text', content: <content>}
   body: ->
-    bodyNode = @node.get('Body')
-    return null unless bodyNode
-    bodyType = bodyNode.attrVal 'BodyType'
-    content = bodyNode.text()
-    {bodyType, content}
+    element = @getChildNode 'body'
+    if element
+      bodyType = element.attrVal('BodyType').toLowerCase()
+      content = element.text()
+      {bodyType, content}
 
-  @addTextMethod 'itemClass', 'subject', 'mimeContent'
+  attachments: ->
+    attachments = @getChildNode 'attachments'
+    if attachments
+      new Attachment(attachNode) for attachNode in attachments.childNodes()
+
+  size: -> @getChildIntValue('size')
+
+  categories: ->
+    element = @getChildNode('Categories')
+    if element
+      for childNode in element.childNodes()
+        childNode.text()
+
+  internetMessageHeaders: ->
+    element = @getChildNode('InternetMessageHeaders')
+    if element
+      for headerNode in element.childNodes()
+        {name: headerNode.attrVal 'HeaderName', value: headerNode.text()}
+
+  @addBoolTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'isResend',
+    'isUnmodified'
+  @addTextMethod 'itemClass', 'subject', 'sensitivity', 'mimeContent',
+    'dateTimeReceived', 'inReplyTo', 'importance'
+  # `itemId` is the item id info that likes {id: <id>, changeKey: <key>}
+  # `parentFolderId` the parent folder id
+  # `body` contain the body content info, {bodyType: }
+  @addAttrMethods 'itemId', 'parentFolderId', 'body'

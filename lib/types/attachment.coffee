@@ -10,6 +10,10 @@ class Attachment
     idNode = @getChildNode 'attachmentId'
     idNode.attrVal('Id') if idNode
 
+  # it represent type of attachment, `item` or `file`
+  type: ->
+    /^(Item|File)/.exec(@node.name())[1].toLowerCase()
+
   size: ->
     element = @getChildNode 'size'
     parseInt element.text() if element

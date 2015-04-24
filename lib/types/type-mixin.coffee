@@ -8,12 +8,30 @@ class TypeMixin extends Mixin
   getChildNode: (methodName) ->
     @node.get "t:#{pascalCase(methodName)}", NAMESPACES
 
+  getChildValue: (methodName) ->
+    element = @getChildNode(methodName)
+    element.text() if element
+
+  getChildIntValue: (methodName) ->
+    element = @getChildNode(methodName)
+    parseInt element.text() if element
+
+  getChildBoolValue: (methodName) ->
+    element = @getChildNode(methodName)
+    element.text() is 'true' if element
+
+  @addBoolTextMethods: (methods...) ->
+    methods.forEach (methodName) =>
+      @prototype[methodName] = -> @getChildBoolValue(methodName)
+
+  @addIntTextMethods: (methods...) ->
+    methods.forEach (methodName) =>
+      @prototype[methodName] = -> @getChildIntValue(methodName)
+
   # add methods into the class by analyze the DOM textContent
   @addTextMethods: (methods...) ->
     methods.forEach (methodName) =>
-      @prototype[methodName] = ->
-        element = @getChildNode(methodName)
-        element.text() if element
+      @prototype[methodName] = -> @getChildValue(methodName)
 
   # add methods into the class by analyze the DOM attributes and textContent
   @addAttrMethods: (methods...) ->
