@@ -20,6 +20,10 @@ class TypeMixin extends Mixin
     element = @getChildNode(methodName)
     element.text() is 'true' if element
 
+  getChildTimeValue: (methodName) ->
+    element = @getChildNode(methodName)
+    element.text() if element
+
   @addBoolTextMethods: (methods...) ->
     methods.forEach (methodName) =>
       @prototype[methodName] = -> @getChildBoolValue(methodName)
@@ -32,6 +36,10 @@ class TypeMixin extends Mixin
   @addTextMethods: (methods...) ->
     methods.forEach (methodName) =>
       @prototype[methodName] = -> @getChildValue(methodName)
+
+  @addTimeTextMethods: (methods...) ->
+    methods.forEach (methodName) =>
+      @prototype[methodName] = -> @getChildTimeValue(methodName)
 
   # add methods into the class by analyze the DOM attributes and textContent
   @addAttrMethods: (methods...) ->
