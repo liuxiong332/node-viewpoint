@@ -35,7 +35,7 @@ class Attachment
 
   content: ->
     contentNode = @getChildNode 'content'
-    new Buffer(contentNode.text()).toString('base64') if contentNode
+    new Buffer(contentNode.text(), 'base64') if contentNode
 
   # `name` is attachment name,
   # `contentType` is the MIME type of content

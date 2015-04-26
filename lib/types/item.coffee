@@ -11,7 +11,7 @@ class Item
     element = @getChildNode('mimeContent')
     if element
       characterSet = element.attrVal 'CharacterSet'
-      content = new Buffer(element.text()).toString('base64')
+      content = new Buffer(element.text(), 'base64')
       {characterSet, content}
 
   # `return` {bodyType: 'html' or 'text', content: <content>}
@@ -43,9 +43,9 @@ class Item
   @addBoolTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'isResend',
     'isUnmodified'
 
-  @addTextMethods 'itemClass', 'subject', 'sensitivity', 'mimeContent',
+  @addTextMethods 'itemClass', 'subject', 'sensitivity',
     'dateTimeReceived', 'inReplyTo', 'importance'
   # `itemId` is the item id info that likes {id: <id>, changeKey: <key>}
   # `parentFolderId` the parent folder id
   # `body` contain the body content info, {bodyType: }
-  @addAttrMethods 'itemId', 'parentFolderId', 'body'
+  @addAttrMethods 'itemId', 'parentFolderId'

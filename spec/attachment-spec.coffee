@@ -16,7 +16,7 @@ describe 'Attachment', ->
       builder.nodeNS NS_T, 'ContentLocation', 'ContentLocation'
       builder.nodeNS NS_T, 'Size', '100'
       builder.nodeNS NS_T, 'IsInline', 'true'
-      fileContent = new Buffer('STRM', 'base64').toString()
+      fileContent = new Buffer('Javascript').toString('base64')
       builder.nodeNS NS_T, 'Content', fileContent
 
   it 'test all of instance methods', ->
@@ -29,5 +29,5 @@ describe 'Attachment', ->
     attachment.contentType().should.equal 'ContentType'
     attachment.contentId().should.equal 'ContentId'
     attachment.contentLocation().should.equal 'ContentLocation'
-    attachment.content().should.equal 'STRM'
+    attachment.content().toString().should.equal 'Javascript'
     attachment.type().should.equal 'item'
