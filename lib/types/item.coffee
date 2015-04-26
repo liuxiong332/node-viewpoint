@@ -1,10 +1,10 @@
-{pascalCase} = require 'ews-util'
+{pascalCase} = require '../ews-util'
 TypeMixin = require './type-mixin'
 Attachment = require './attachment'
 
+module.exports =
 class Item
   TypeMixin.includeInto this
-
   constructor: (@node) ->
 
   mimeContent: ->
@@ -42,7 +42,8 @@ class Item
 
   @addBoolTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'isResend',
     'isUnmodified'
-  @addTextMethod 'itemClass', 'subject', 'sensitivity', 'mimeContent',
+
+  @addTextMethods 'itemClass', 'subject', 'sensitivity', 'mimeContent',
     'dateTimeReceived', 'inReplyTo', 'importance'
   # `itemId` is the item id info that likes {id: <id>, changeKey: <key>}
   # `parentFolderId` the parent folder id

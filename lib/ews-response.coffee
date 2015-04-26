@@ -1,5 +1,9 @@
 _ = require 'underscore'
 {NAMESPACES} = require './ews-ns'
+# Item = require './types/item'
+# Message = require './types/message'
+
+# Types = {Item, Message}
 
 class RootFolder
   constructor: (@node) ->
@@ -11,7 +15,10 @@ class RootFolder
     @node.attrVal('IncludesLastItemInRange') is 'true'
 
   items: ->
-    @node.get('t:Items', NAMESPACES)
+    itemsNode = @node.get('t:Items', NAMESPACES)
+    # for childNode in itemsNode.childNodes()
+    #   if (Constructor = Types[childNode.name()])?
+    #     new Constructor(childNode)
 
 module.exports =
 class EwsResponse

@@ -1,4 +1,4 @@
-{pascalCase, camelCase} = require 'ews-util'
+{pascalCase, camelCase} = require '../ews-util'
 Item = require './item'
 TypeMixin = require './type-mixin'
 {NAMESPACES} = require '../ews-ns'
@@ -10,7 +10,9 @@ class Mailbox
   addTextMethods 'name', 'emailAddress', 'routingType', 'mailboxType'
   addAttrMethods 'itemId'
 
+module.exports =
 class Message extends Item
+  TypeMixin.includeInto this
   constructor: (node) ->
     super node
 
