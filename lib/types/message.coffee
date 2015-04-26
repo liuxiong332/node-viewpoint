@@ -7,12 +7,11 @@ class Mailbox
   TypeMixin.includeInto this
   constructor: (@node) ->
 
-  addTextMethods 'name', 'emailAddress', 'routingType', 'mailboxType'
-  addAttrMethods 'itemId'
+  @addTextMethods 'name', 'emailAddress', 'routingType', 'mailboxType'
+  @addAttrMethods 'itemId'
 
 module.exports =
 class Message extends Item
-  TypeMixin.includeInto this
   constructor: (node) ->
     super node
 
@@ -38,3 +37,4 @@ class Message extends Item
     'references'
   @addBoolTextMethods 'isReadReceiptRequested', 'isDeliveryReceiptRequested',
     'isRead', 'isResponseRequested'
+
