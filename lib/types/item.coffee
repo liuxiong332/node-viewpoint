@@ -1,7 +1,6 @@
-{pascalCase, camelCase} = require 'ews-util'
+{pascalCase} = require 'ews-util'
 TypeMixin = require './type-mixin'
 Attachment = require './attachment'
-{NAMESPACES} = require '../ews-ns'
 
 class Item
   TypeMixin.includeInto this
@@ -19,7 +18,7 @@ class Item
   body: ->
     element = @getChildNode 'body'
     if element
-      bodyType = element.attrVal('BodyType').toLowerCase(),
+      bodyType = element.attrVal('BodyType').toLowerCase()
       {bodyType, content: element.text()}
 
   attachments: ->
@@ -27,35 +26,25 @@ class Item
     if attachments
       new Attachment(attachNode) for attachNode in attachments.childNodes()
 
+  size: -> @getChildIntValue('size')
+
   categories: ->
-    element = @getChildNode('categories')
+    element = @getChildNode('Categories')
     if element
       for childNode in element.childNodes()
         childNode.text()
 
   internetMessageHeaders: ->
-    element = @getChildNode('internetMessageHeaders')
+    element = @getChildNode('InternetMessageHeaders')
     if element
       for headerNode in element.childNodes()
         {name: headerNode.attrVal 'HeaderName', value: headerNode.text()}
 
-  responseObjects: ->
-    element = @getChildNode('responseObjects')
-    if element
-      objects = {}
-      for itemNode in element.childNodes()
-        objects[camelCase(itemNode.name())] = new Item(itemNode)
-
-  @addTimeTextMethods 'dateTimeReceived', 'dateTimeSent', 'dateTimeCreated',
-    'ReminderDueBy'
   @addBoolTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'isResend',
-    'isUnmodified', 'reminderIsSet', 'hasAttachments'
-  @addIntTextMethods 'size', 'reminderMinutesBeforeStart'
-  # * `culture` indicates the language, specified by using the RFC 1766 culture
-  #   identifier; for example, en-US.
+    'isUnmodified'
   @addTextMethod 'itemClass', 'subject', 'sensitivity', 'mimeContent',
-    'inReplyTo', 'importance', 'displayCc', 'displayTo', 'culture'
+    'dateTimeReceived', 'inReplyTo', 'importance'
   # `itemId` is the item id info that likes {id: <id>, changeKey: <key>}
   # `parentFolderId` the parent folder id
   # `body` contain the body content info, {bodyType: }
-  @addAttrMethods 'itemId', 'parentFolderId', 'body', 'conversationId'
+  @addAttrMethods 'itemId', 'parentFolderId', 'body'
