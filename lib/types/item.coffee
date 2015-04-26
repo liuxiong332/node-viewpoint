@@ -19,9 +19,8 @@ class Item
   body: ->
     element = @getChildNode 'body'
     if element
-      bodyType = element.attrVal('BodyType').toLowerCase()
-      content = element.text()
-      {bodyType, content}
+      bodyType = element.attrVal('BodyType').toLowerCase(),
+      {bodyType, content: element.text()}
 
   attachments: ->
     attachments = @getChildNode 'attachments'

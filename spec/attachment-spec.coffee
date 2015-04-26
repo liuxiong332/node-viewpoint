@@ -30,3 +30,4 @@ describe 'Attachment', ->
     attachment.contentId().should.equal 'ContentId'
     attachment.contentLocation().should.equal 'ContentLocation'
     attachment.content().should.equal 'STRM'
+    attachment.type().should.equal 'item'
