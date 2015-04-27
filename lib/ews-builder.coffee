@@ -56,6 +56,31 @@ class EwsBuilder
       content = new Buffer(params.content).toString('base64')
       builder.nodeNS NS_T, 'MimeContent', {characterSet}, content
 
+  @mailbox: (builder, params) ->
+    if params?
+      builder.nodeNS NS_T, 'Mailbox', (builder) =>
+        @_buildText(builder, 'name', params)
+        @_buildText(builder, 'emailAddress', params)
+
+  @_buildMailbox: (builder, name, params) ->
+    if params?
+      builder.nodeNS NS_T, name, (builder) =>
+        params = [params] unless Array.isArray(params)
+        for item in params
+          @mailbox(builder, item)
+
+  @sender: (builder, params) -> @_buildMailbox(builder, 'Sender', params)
+  @toRecipients: (builder, params) ->
+    @_buildMailbox(builder, 'ToRecipients', params)
+  @ccRecipients: (builder, params) ->
+    @_buildMailbox(builder, 'CcRecipients', params)
+  @bccRecipients: (builder, params) ->
+    @_buildMailbox(builder, 'BccRecipients', params)
+  @from: (builder, params) ->
+    @_buildMailbox(builder, 'From', params)
+  @isRead: (builder, params) ->
+    @builder.nodeNS NS_T, 'IsRead', params.toString() if params?
+
   @itemAttachment: (builder, params) ->
     if params?
       builder.nodeNS NS_T, 'ItemAttachment', (builder) =>
