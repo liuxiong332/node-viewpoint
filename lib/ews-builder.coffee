@@ -14,39 +14,23 @@ class EwsBuilder
     @builder.rootNS NS.NS_SOAP, 'Envelope', (builder) ->
       builder.nodeNS NS.NS_SOAP, 'Body', bodyCallback
 
-  @_buildText: (builder, name, opts) ->
-    if (value = opts[name])?
-      builder.nodeNS NS_T, pascalCase(name), value
-
-  @_buildTime: (builder, name, opts) ->
-    if (value = opts[name])?
-      builder.nodeNS NS_T, pascalCase(name), value.toISOString()
-
-  @_buildTexts: (builder, opts, names...) ->
-    for name in names
-      @_buildText builder, name, opts
-
-  @_buildTimes: (builder, opts, names...) ->
-    for name in names
-      @_buildTime builder, name, opts
-
-  @_buildPascalText: (builder, name, opts) ->
-    if (value = opts[name])?
-      builder.nodeNS NS_T, pascalCase(name), pascalCase(value)
-
-  @_buildAttr: (builder, name, opts) ->
-    if (attrs = opts[name])?
-      params = {}
-      for key, value of attrs when key isnt 'content'
-        params[pascalCase(key)] = value
-      builder.nodeNS NS_T, pascalCase(name), params, attrs.content
-
   @_addTextMethods: (names...) ->
     names.forEach (name) =>
       this[name] = (builder, params) ->
         builder.nodeNS NS_T, pascalCase(name), params
 
-  @_addTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'inReplyTo', 'isResend'
+  # `sensitivity` {String} value can be `Normal`, `Personal`, `Private`,
+  #   or `Confidential`
+  # `importance` {String} can be `Low`, `Normal`, `High`
+  @_addTextMethods 'isSubmitted', 'isDraft', 'isFromMe', 'inReplyTo',
+    'isResend', 'sensitivity', 'importance', 'itemClass', 'subject', 'isRead'
+
+  @_addTimeMethods: (names...) ->
+    names.forEach (name) =>
+      this[name] = (builder, params) ->
+        builder.nodeNS NS_T, pascalCase(name), params.toISOString()
+
+  @_addTimeMethods 'dateTimeSent', 'dateTimeCreated'
 
   @bodyType: (builder, type) ->
     builder.nodeNS NS_T, 'BodyType', @convertBodyType(type) if type?
@@ -57,18 +41,7 @@ class EwsBuilder
       params = {bodyType, isTruncated: body.isTruncated}
       builder.nodeNS NS_T, 'Body', params, body.content
 
-  @mailbox: (builder, params) ->
-    if params?
-      builder.nodeNS NS_T, 'Mailbox', (builder) =>
-        @_buildText(builder, 'name', params)
-        @_buildText(builder, 'emailAddress', params)
-
-  @_buildMailbox: (builder, name, params) ->
-    if params?
-      builder.nodeNS NS_T, name, (builder) =>
-        params = [params] unless Array.isArray(params)
-        for item in params
-          @mailbox(builder, item)
+  @_addTextMethods 'name', 'emailAddress'
 
   @mimeContent: (builder, params) ->
     characterSet = params['characterSet']
@@ -82,50 +55,43 @@ class EwsBuilder
     attrs = {Id: params.id, ChangeKey: params.changeKey}
     builder.nodeNS NS_T, 'ParentFolderId', attrs
 
-  # `params` {String} can be `Normal`, `Personal`, `Private`, `Confidential`
-  @sensitivity: (builder, params) ->
-    builder.nodeNS NS_T, 'Sensitivity', params
-  # `params` {String} can be `Low`, `Normal`, `High`
-  @importance: (builder, params) ->
-    builder.nodeNS NS_T, 'Importance', params
+  @mailbox: (builder, params) ->
+    if params?
+      builder.nodeNS NS_T, 'Mailbox', (builder) =>
+        @name(builder, params.name) if params.name?
+        @emailAddress(builder, params.emailAddress) if params.emailAddress?
 
-  @itemClass: (builder, params) ->
-    builder.nodeNS NS_T, 'ItemClass', params
+  @_buildMailbox: (builder, name, params) ->
+    if params?
+      builder.nodeNS NS_T, name, (builder) =>
+        params = [params] unless Array.isArray(params)
+        for item in params
+          @mailbox(builder, item)
 
-  @subject: (builder, params) ->
-    builder.nodeNS NS_T, 'Subject', params
+  @_addMailboxMethods: (names...) ->
+    names.forEach (name) =>
+      this[name] = (builder, params) ->
+        @_buildMailbox(builder, pascalCase(name), params)
 
-  @sender: (builder, params) -> @_buildMailbox(builder, 'Sender', params)
-  @toRecipients: (builder, params) ->
-    @_buildMailbox(builder, 'ToRecipients', params)
-  @ccRecipients: (builder, params) ->
-    @_buildMailbox(builder, 'CcRecipients', params)
-  @bccRecipients: (builder, params) ->
-    @_buildMailbox(builder, 'BccRecipients', params)
-  @from: (builder, params) ->
-    @_buildMailbox(builder, 'From', params)
-  @isRead: (builder, params) ->
-    @builder.nodeNS NS_T, 'IsRead', params.toString() if params?
+  @_addMailboxMethods 'sender', 'toRecipients', 'ccRecipients', 'bccRecipients',
+    'from'
+
+  @_addTextMethods 'contentType', 'contentId', 'contentLocation'
 
   @itemAttachment: (builder, params) ->
-    if params?
-      builder.nodeNS NS_T, 'ItemAttachment', (builder) =>
-        @_buildText(builder, 'name', params)
-        @_buildText(builder, 'contentType', params)
-        @_buildText(builder, 'contentId', params)
-        @_buildText(builder, 'contentLocation', params)
-        @item(builder, params.item)
-        @message(builder, params.message)
+    builder.nodeNS NS_T, 'ItemAttachment', (builder) =>
+      for key, param of params when param?
+        this[key]?.call(this, builder, param)
+
+  @content: (builder, params) ->
+    unless Buffer.isBuffer(params)
+      throw new TypeError('params should be Buffer')
+    builder.nodeNS NS_T, 'Content', params.toString('base64')
 
   @fileAttachment: (builder, params) ->
-    if params?
-      builder.nodeNS NS_T, 'FileAttachment', (builder) =>
-        @_buildText(builder, 'name', params)
-        @_buildText(builder, 'contentType', params)
-        @_buildText(builder, 'contentId', params)
-        @_buildText(builder, 'contentLocation', params)
-        if params.content?
-          builder.nodeNS NS_T, 'Content', params.content.toString('base64')
+    builder.nodeNS NS_T, 'FileAttachment', (builder) =>
+      for key, param of params when param?
+        this[key]?.call(this, builder, param)
 
   # `builder` is XMLBuilder
   # `attachments` {Array} each item is attachment params, which like
@@ -152,6 +118,11 @@ class EwsBuilder
       builder.nodeNS NS_T, 'InternetMessageHeaders', (builder) =>
         for header in headers
           @internetMessageHeader builder, header
+
+  @baseShape: (builder, params) ->
+    builder.nodeNS NS_T, 'BaseShape', pascalCase(params)
+
+  @_addTextMethods 'includeMimeContent'
   # * `itemShape` {Object} the ItemShape parameters
   #   * `baseShape` {String} can be `idOnly` or `default` or `allProperties`
   #   * `includeMimeContent` (optional) {Bool}
@@ -159,9 +130,9 @@ class EwsBuilder
   # * `builder` {ChildrenBuilder}
   @itemShape: (itemShape, builder) ->
     builder.nodeNS NS_M, 'ItemShape', (builder) =>
-      @_buildPascalText(builder, 'baseShape', itemShape)
-      @_buildText(builder, 'includeMimeContent', itemShape)
-      @bodyType(builder, itemShape.bodyType)
+      @baseShape(builder, itemShape.baseShape) if itemShape.baseShape?
+      @includeMimeContent(builder, imc) if (imc = itemShape.includeMimeContent)?
+      @bodyType(builder, itemShape.bodyType) if itemShape.bodyType?
 
   # * `folderIds` {Array} or `Object`
   #   every item of `folderIds` is `Object`, for distinguished folderId,
@@ -199,16 +170,8 @@ class EwsBuilder
 
   @message: (msg, builder) ->
     builder.nodeNS NS_T, 'Message', (builder) =>
-      @_buildText(builder, 'itemClass', msg)
-      @_buildText(builder, 'subject', msg)
-      @mimeContent(builder, msg.mimeContent)
-      @_buildText(builder, 'sensitivity', msg)
-      @body(builder, msg.body)
-      @attachments(builder, msg.attachments)
-      @_buildTexts builder, msg, 'importance', 'inReplyTo', 'isSubmitted',
-        'isDraft', 'isResend', 'isFromMe', 'isUnmodified'
-      @internetMessageHeaders(builder, msg.internetMessageHeaders)
-      @_buildTimes builder, msg, 'dateTimeSent', 'dateTimeCreated'
+      for key, param of msg when param?
+        this[key]?.call(this, builder, param)
 
   @convertBodyType: (body) ->
     switch body
