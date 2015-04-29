@@ -23,7 +23,7 @@ describe 'EwsBuilder', ->
       bodyType: 'html'
 
     doc = EwsBuilder.build (builder) ->
-      EwsBuilder.itemShape itemShape, builder
+      EwsBuilder.itemShape builder, itemShape
 
     itemShapeNode = doc.get('//m:ItemShape', NS.NAMESPACES)
     itemShapeNode.should.ok
@@ -40,7 +40,7 @@ describe 'EwsBuilder', ->
       {id: 'ID2', changeKey: 'KEY2'}
     ]
     doc = EwsBuilder.build (builder) ->
-      EwsBuilder.parentFolderIds folderIds, builder
+      EwsBuilder.parentFolderIds builder, folderIds
 
     folderIdsNode = doc.get('//m:ParentFolderIds', NS.NAMESPACES)
     childNodes = folderIdsNode.childNodes()

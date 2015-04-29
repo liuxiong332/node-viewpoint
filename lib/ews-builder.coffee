@@ -180,7 +180,7 @@ class EwsBuilder
       this[name] = (builder, params) ->
         @_buildItem(builder, name, params)
 
-  _addItemMethods 'item', 'message'
+  @_addItemMethods 'item', 'message'
 
   @items: (builder, params) ->
     params = [params] unless Array.isArray(params)
