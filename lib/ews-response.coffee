@@ -1,8 +1,8 @@
 {NAMESPACES} = require './ews-ns'
-# Item = require './types/item'
-# Message = require './types/message'
+Item = require './types/item'
+Message = require './types/message'
 
-# Types = {Item, Message}
+Types = {Item, Message}
 
 class RootFolder
   constructor: (@node) ->
@@ -15,9 +15,9 @@ class RootFolder
 
   items: ->
     itemsNode = @node.get('t:Items', NAMESPACES)
-    # for childNode in itemsNode.childNodes()
-    #   if (Constructor = Types[childNode.name()])?
-    #     new Constructor(childNode)
+    for childNode in itemsNode.childNodes()
+      if (Constructor = Types[childNode.name()])?
+        new Constructor(childNode)
 
 module.exports =
 class EWSResponse
@@ -31,10 +31,10 @@ class EWSResponse
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
     @msgChildren = _msgNode.childNodes()
 
-  responses: ->
+  response: ->
     for node in @msgChildren
       nodeName = node.name()
-      continue if nodeName is 'ResponseCode'
-      new EWSResponse[nodeName](node)
+      if nodeName isnt 'ResponseCode'
+        return new EWSResponse[nodeName](node)
 
   this.RootFolder = RootFolder

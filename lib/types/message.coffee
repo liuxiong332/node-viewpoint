@@ -37,4 +37,3 @@ class Message extends Item
     'references'
   @addBoolTextMethods 'isReadReceiptRequested', 'isDeliveryReceiptRequested',
     'isRead', 'isResponseRequested'
-

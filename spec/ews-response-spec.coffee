@@ -23,8 +23,7 @@ describe 'EwsResponse', ->
     doc = resRootFolder()
     res = new EwsResponse(doc)
     res.isSuccess.should.ok
-    resMsgs = res.responses()
-    resMsgs.length.should.equal 1
-    resMsgs[0].totalItemsInView().should.equal 10
-    resMsgs[0].includesLastItemInRange().should.equal true
-    resMsgs[0].items().should.ok
+    resMsg = res.response()
+    resMsg.totalItemsInView().should.equal 10
+    resMsg.includesLastItemInRange().should.equal true
+    resMsg.items().should.ok
