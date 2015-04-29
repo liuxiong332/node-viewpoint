@@ -15,8 +15,11 @@ class EWSWebService
   EWSItemOperations.includeInto(this)
   RequestClient.includeInto(this)
 
+  constructor: ->
+    RequestClient.apply(this, arguments)
+
   doSoapRequest: (doc) ->
-    @send(doc.toString()).then (res) ->
+    @send(doc.toString(false)).then (res) ->
       ewsRes = new EWSResponse libxml.parseXmlString(res.body)
       unless ewsRes.isSuccess
         param =
