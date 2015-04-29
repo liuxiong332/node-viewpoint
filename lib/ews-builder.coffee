@@ -132,7 +132,7 @@ class EwsBuilder
   #   * `includeMimeContent` (optional) {Bool}
   #   * `bodyType` (optional) {String}  `html` or `text` or `best`
   # * `builder` {ChildrenBuilder}
-  @itemShape: (itemShape, builder) ->
+  @itemShape: (builder, itemShape) ->
     builder.nodeNS NS_M, 'ItemShape', (builder) =>
       @baseShape(builder, itemShape.baseShape) if itemShape.baseShape?
       @includeMimeContent(builder, imc) if (imc = itemShape.includeMimeContent)?
@@ -142,7 +142,7 @@ class EwsBuilder
   #   every item of `folderIds` is `Object`, for distinguished folderId,
   #   just like {id: <myId>, changeKey: <key>, type: 'distinguished'},
   #   for folderId, the `type` should be ignore
-  @parentFolderIds: (folderIds, builder) ->
+  @parentFolderIds: (builder, folderIds) ->
     folderIds = [folderIds] unless Array.isArray folderIds
 
     builder.nodeNS NS_M, 'ParentFolderIds', (builder) ->
@@ -156,7 +156,7 @@ class EwsBuilder
   #   * `maxReturned` {Number}
   #   * `offset` {Number}
   #   * `basePoint` {String} 'beginning' or 'end'
-  @indexedPageItemView: (viewOpts, builder) ->
+  @indexedPageItemView: (builder, viewOpts) ->
     params =
       MaxEntriesReturned: viewOpts.maxReturned
       Offset: viewOpts.offset.toString()
@@ -165,16 +165,27 @@ class EwsBuilder
 
   # `itemIds` {Array} or 'Object'
   #   every item of `itemIds` is 'Object', like {id: <id>, changeKey: <key>}
-  @itemIds: (itemIds, builder) ->
+  @itemIds: (builder, itemIds) ->
     itemIds = [itemIds] unless Array.isArray(itemIds)
     builder.nodeNS NS_M, 'ItemIds', (builder) =>
       @itemId(builder, iid) for iid in itemIds
 
-
-  @message: (msg, builder) ->
-    builder.nodeNS NS_T, 'Message', (builder) =>
-      for key, param of msg when param?
+  @_buildItem: (builder, name, params) ->
+    builder.nodeNS NS_T, pascalCase(name), (builder) =>
+      for key, param of params when param?
         this[key]?.call(this, builder, param)
+
+  @_addItemMethods: (names...) ->
+    names.forEach (name) =>
+      this[name] = (builder, params) ->
+        @_buildItem(builder, name, params)
+
+  _addItemMethods 'item', 'message'
+
+  @items: (builder, params) ->
+    params = [params] unless Array.isArray(params)
+    builder.nodeNS NS_M, 'Items', (builder) =>
+      @message(builder, itemInfo) for itemInfo in params
 
   @convertBodyType: (body) ->
     switch body
