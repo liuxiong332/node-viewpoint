@@ -7,7 +7,7 @@ describe 'TypeMixin', ->
   beforeEach ->
     opts =
       itemShape: baseShape: 'idOnly'
-      folderIds: {id: 'myId', changeKey: 'changeKey'}
+      parentFolderIds: {id: 'myId', changeKey: 'changeKey'}
     doc = (new EWSItemOperations).buildFindItem opts
 
   it '@addTextMethods', ->

@@ -48,12 +48,16 @@ class EwsBuilder
     content = new Buffer(params.content).toString('base64')
     builder.nodeNS NS_T, 'MimeContent', {characterSet}, content
 
+  parseId = (param) ->
+    res = {Id: param.id}
+    res.ChangeKey = param.changeKey if param.changeKey?
+    res
+
   @itemId: (builder, params) ->
-    builder.nodeNS NS_T, 'ItemId', {Id: params.id, ChangeKey: params.changeKey}
+    builder.nodeNS NS_T, 'ItemId', parseId(params)
 
   @parentFolderId: (builder, params) ->
-    attrs = {Id: params.id, ChangeKey: params.changeKey}
-    builder.nodeNS NS_T, 'ParentFolderId', attrs
+    builder.nodeNS NS_T, 'ParentFolderId', parseId
 
   @mailbox: (builder, params) ->
     if params?
@@ -143,11 +147,10 @@ class EwsBuilder
 
     builder.nodeNS NS_M, 'ParentFolderIds', (builder) ->
       for fid in folderIds
-        params = {Id: fid.id, ChangeKey: fid.changeKey}
         if fid.type is 'distinguished'
-          builder.nodeNS NS_T, 'DistinguishedFolderId', params
+          builder.nodeNS NS_T, 'DistinguishedFolderId', parseId(fid)
         else
-          builder.nodeNS NS_T, 'FolderId', params
+          builder.nodeNS NS_T, 'FolderId', parseId(fid)
 
   # * `viewOpts` {Object}
   #   * `maxReturned` {Number}

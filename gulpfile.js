@@ -57,7 +57,7 @@ gulp.task('test', ['lint', 'istanbul']);
 gulp.task('release', ['bump']);
 
 gulp.task('dist', function () {
-  return gulp.src(paths.coffee, {base: '.'})
+  return gulp.src(paths.coffee, {base: './lib'})
     .pipe(plugins.coffee({bare: true})).on('error', plugins.util.log)
     .pipe(gulp.dest('./dist'));
 });

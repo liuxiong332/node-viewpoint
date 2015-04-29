@@ -5,7 +5,7 @@ libxml = require 'libxmljs'
 
 class SoapError extends Error
   constructor: ->
-    err = super.apply this, arguments
+    err = super
     @name = 'SoapError'
     @stack = err.stack
     @message = err.message

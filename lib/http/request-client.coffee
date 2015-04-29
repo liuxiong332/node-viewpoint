@@ -25,5 +25,7 @@ class RequestClient extends Mixin
   setAuth: (username, password, domain) ->
     @options.ntlmAuth = {username, password, domain}
 
+  setUrl: (@url) ->
+    
   send: (soapMsg) ->
     @requestPool.post @url, _.extend body: soapMsg, @options
