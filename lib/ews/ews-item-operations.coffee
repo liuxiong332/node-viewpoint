@@ -1,8 +1,9 @@
+Mixin = require 'mixto'
 EwsBuilder = require '../ews-builder'
 {NS_MESSAGES} = require '../ews-ns'
 
 module.exports =
-class EWSItemOperations
+class EWSItemOperations extends Mixin
 
   buildFindItem: (opts={}) ->
     EwsBuilder.build (builder) ->

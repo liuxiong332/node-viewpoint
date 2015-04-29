@@ -22,8 +22,8 @@ describe 'EwsResponse', ->
   it 'RootFolder', ->
     doc = resRootFolder()
     res = new EwsResponse(doc)
-    res.status.should.ok
-    resMsgs = res.responseMessages()
+    res.isSuccess.should.ok
+    resMsgs = res.responses()
     resMsgs.length.should.equal 1
     resMsgs[0].totalItemsInView().should.equal 10
     resMsgs[0].includesLastItemInRange().should.equal true

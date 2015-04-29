@@ -1,4 +1,3 @@
-_ = require 'underscore'
 {NAMESPACES} = require './ews-ns'
 # Item = require './types/item'
 # Message = require './types/message'
@@ -21,21 +20,21 @@ class RootFolder
     #     new Constructor(childNode)
 
 module.exports =
-class EwsResponse
+class EWSResponse
   constructor: (@doc) ->
     resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
 
     _msgNode = resMsgs.child(0)
-    @status = _msgNode.attrVal('ResponseClass') is 'Success'
-    unless @status
+    @isSuccess = _msgNode.attrVal('ResponseClass') is 'Success'
+    unless @isSuccess
       @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
     @msgChildren = _msgNode.childNodes()
 
-  responseMessages: ->
+  responses: ->
     for node in @msgChildren
       nodeName = node.name()
       continue if nodeName is 'ResponseCode'
-      new EwsResponse[nodeName](node)
+      new EWSResponse[nodeName](node)
 
   this.RootFolder = RootFolder

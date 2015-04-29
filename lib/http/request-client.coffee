@@ -3,6 +3,7 @@ https = require 'https'
 _ = require 'underscore'
 {globalFilterManager} = require 'http-ext'
 NtlmAuthFilter = require 'http-ext-ntlm'
+Mixin = require 'mixto'
 
 globalFilterManager.use NtlmAuthFilter
 
@@ -14,7 +15,7 @@ globalFilterManager.use NtlmAuthFilter
 # ```
 
 module.exports =
-class RequestClient
+class RequestClient extends Mixin
   constructor: (url, options={}) ->
     @requestPool = new HttpRequestPool
     @url = url
