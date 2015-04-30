@@ -14,7 +14,7 @@ class RootFolder
     @node.attrVal('IncludesLastItemInRange') is 'true'
 
   items: ->
-    itemsNode = @node.get('t:Items', NAMESPACES)
+    itemsNode = @node.get('m:Items', NAMESPACES)
     for childNode in itemsNode.childNodes()
       if (Constructor = Types[childNode.name()])?
         new Constructor(childNode)
