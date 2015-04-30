@@ -4,7 +4,10 @@ EWSBuilder = require '../ews-builder'
 
 module.exports =
 class EWSFolderOperations extends Mixin
-  buildFindItem: (opts={}) ->
+  buildCreateFolder: (opts={}) ->
     EWSBuilder.build (builder) ->
       EWSBuilder.$parentFolderId(builder, opts.parentFolderId)
       EWSBuilder.$folders(builder, opts.folders)
+
+  createFolder: (opts) ->
+    @doSoapRequest @buildCreateFolder(opts)

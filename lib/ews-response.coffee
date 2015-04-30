@@ -28,22 +28,29 @@ class Items
       if (Constructor = Types[childNode.name()])?
         new Constructor(childNode)
 
+
 ResponseMsgs = {RootFolder, Items}
 
 module.exports =
 class EWSResponse
   constructor: (@doc) ->
-    resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
+    @resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
 
-    _msgNode = resMsgs.child(0)
+    _msgNode = @resMsgs.child(0)
     @isSuccess = _msgNode.attrVal('ResponseClass') is 'Success'
     unless @isSuccess
       @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
-    @msgChildren = _msgNode.childNodes()
 
-  response: ->
-    for node in @msgChildren
+  _responseNode: (resMsg) ->
+    for node in resMsg.childNodes()
       nodeName = node.name()
       if nodeName isnt 'ResponseCode'
         return new ResponseMsgs[nodeName](node)
+
+  response: ->
+    @_responseNode @resMsgs.child(0)
+
+  responses: ->
+    for resNode in @resMsgs.childNodes()
+      @_responseNode resNode
