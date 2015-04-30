@@ -48,3 +48,25 @@ describe 'EWSFolderOperations', ->
     folderNode.attrVals().should.eql {Traversal: 'Shadow'}
     folderNode.get('m:ParentFolderIds', NAMESPACES).should.ok
     folderNode.get('m:FolderShape', NAMESPACES).should.ok
+
+  it 'buildGetFolder', ->
+    operation = new EWSFolderOperations
+    opts =
+      folderIds: {id: 'ID'}
+      folderShape: {baseShape: 'Default'}
+    doc = operation.buildGetFolder opts
+
+    folderNode = doc.get('//m:GetFolder', NAMESPACES)
+    folderNode.get('m:FolderShape', NAMESPACES).should.ok
+    folderNode.get('m:FolderIds', NAMESPACES).should.ok
+
+  it 'buildMoveFolder', ->
+    operation = new EWSFolderOperations
+    opts =
+      toFolderId: {id: 'ID'}
+      folderIds: {id: 'ID2'}
+    doc = operation.buildMoveFolder opts
+
+    folderNode = doc.get('//m:MoveFolder', NAMESPACES)
+    folderNode.get('m:ToFolderId', NAMESPACES).should.ok
+    folderNode.get('m:FolderIds', NAMESPACES).should.ok
