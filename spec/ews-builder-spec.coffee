@@ -112,3 +112,12 @@ describe 'EWSBuilder', ->
     node.childNodes().length.should.equal 2
     node.get('t:Name', NS.NAMESPACES).text().should.equal 'NAME'
     node.get('t:ContentType', NS.NAMESPACES).text().should.equal 'TYPE'
+
+  it '@$additionalProperties', ->
+    properties = ['PROP1', 'PROP2']
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$additionalProperties(builder, properties)
+    node = doc.get('//t:AdditionalProperties', NS.NAMESPACES)
+    node.childNodes().length.should.equal 2
+    node.child(0).attrVals().should.eql {FieldURI: 'PROP1'}
+    node.child(1).attrVals().should.eql {FieldURI: 'PROP2'}

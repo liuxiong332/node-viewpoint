@@ -25,3 +25,9 @@ class EWSFolderOperations extends Mixin
   #   `folders` {Array} or `Object`
   deleteFolder: (opts) ->
     @doSoapRequest @buildDeleteFolder(opts)
+
+  buildFindFolder: (opts={}) ->
+    EWSBuilder.build (builder) ->
+      param = {Traversal: opts.traversal}
+      builder.nodeNS NS_MESSAGES, 'FindFolder', param, (builder) ->
+        EWSBuilder.$parentFolderIds(builder, opts.parentFolderIds)

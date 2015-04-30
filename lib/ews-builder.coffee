@@ -212,6 +212,11 @@ class EWSBuilder
   @$fieldURI: (builder, param) ->
     builder.nodeNS NS_T, 'FieldURI', {FieldURI: param}
 
+  @$additionalProperties: (builder, params) ->
+    builder.nodeNS NS_T, 'AdditionalProperties', (builder) =>
+      params = [params] unless Array.isArray(params)
+      @$fieldURI(builder, info) for info in params
+
   @_addItemMethods 'appendToItemField', 'setItemField', 'deleteItemField'
 
   # `param` {Object}
