@@ -71,5 +71,16 @@ class EWSItemOperations extends Mixin
         if opts.savedItemFolderId
           EwsBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
 
-  SendItem: (opts) ->
+  sendItem: (opts) ->
     @doSoapRequest @buildSendItem(opts)
+
+  buildUpdateItem: (opts={}) ->
+    EwsBuilder.build (builder) ->
+      param = {MessageDisposition: opts.messageDisposition}
+      builder.nodeNS NS_MESSAGES 'UpdateItem', param, (builder) ->
+        if opts.savedItemFolderId
+          EwsBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
+        EwsBuilder.$itemChanges(builder, opts.itemChanges)
+
+  updateItem: (opts) ->
+    @doSoapRequest @buildUpdateItem(opts)

@@ -27,7 +27,8 @@ describe 'EwsResponse', ->
         {itemId: {id: 'ID1', changeKey: 'KEY1'}}
         {itemId: {id: 'ID2', changeKey: 'KEY2'}}
       ]
-      EWSBuilder.$items(builder, params)
+      builder.nodeNS NS_T, 'Items', (builder) ->
+        EWSBuilder.$message(builder, itemInfo) for itemInfo in params
 
     res = new EwsResponse(doc)
     res.isSuccess.should.ok

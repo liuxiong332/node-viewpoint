@@ -36,15 +36,22 @@ class EWSBuilder
 
   @_addTimeMethods 'dateTimeSent', 'dateTimeCreated'
 
+  convertBodyType = (body) ->
+    switch body
+      when 'html' then 'HTML'
+      when 'text' then 'Text'
+      when 'best' then 'Best'
+      else bodyType
+
   @$bodyType: (builder, type) ->
-    builder.nodeNS NS_T, 'BodyType', @convertBodyType(type) if type?
+    builder.nodeNS NS_T, 'BodyType', convertBodyType(type) if type?
 
   @$body: (builder, body) ->
     params = {}
     if _.isString body
       content = body
     else
-      params.BodyType = @convertBodyType(body.bodyType) if body.bodyType?
+      params.BodyType = convertBodyType(body.bodyType) if body.bodyType?
       params.IsTruncated = body.isTruncated if body.isTruncated?
       content = body.content
     builder.nodeNS NS_T, 'Body', params, content
@@ -70,6 +77,9 @@ class EWSBuilder
 
   @$parentFolderId: (builder, params) ->
     builder.nodeNS NS_T, 'ParentFolderId', parseId(params)
+
+  @$folderId: (builder, param) ->
+    builder.nodeNS NS_T, 'FolderId', parseId(param)
 
   @$mailbox: (builder, params) ->
     builder.nodeNS NS_T, 'Mailbox', (builder) =>
@@ -196,9 +206,44 @@ class EWSBuilder
     builder.nodeNS NS_M, 'Items', (builder) =>
       @$message(builder, itemInfo) for itemInfo in params
 
-  @convertBodyType: (body) ->
-    switch body
-      when 'html' then 'HTML'
-      when 'text' then 'Text'
-      when 'best' then 'Best'
-      else bodyType
+  @$fieldURI: (builder, param) ->
+    builder.nodeNS NS_T, 'FieldURI', {FieldURI: param}
+
+  @_addItemMethods 'appendToItemField', 'setItemField', 'deleteItemField'
+
+  # `param` {Object}
+  #   `appendFields` {Array} each item is like {fieldURI: <uri>, item: <item>}
+  #   `setFields` {Array}
+  #   `deleteFields` {Array}
+  @$updates: (builder, param) ->
+    {appendFields, setFields, deleteFields} = param
+    builder.nodeNS NS_T, 'Updates', (builder) =>
+      if appendFields
+        appendFields = [appendFields] unless Array.isArray(appendFields)
+        @$appendToItemField(builder, field) for field in appendFields
+      if setFields
+        setFields = [setFields] unless Array.isArray(setFields)
+        @$setItemField(builder, field) for field in setFields
+      if deleteFields
+        deleteFields = [deleteFields] unless Array.isArray(deleteFields)
+        @$deleteItemField(builder, field) for field in deleteFields
+
+  @$itemChange: (builder, param) ->
+    builder.nodeNS NS_T, 'ItemChange', (builder) ->
+      @$itemId(builder, param.itemId)
+      @$updates(builder, param)
+
+  @$itemChanges: (builder, params) ->
+    builder.nodeNS NS_T, 'ItemChanges', (builder) =>
+      params = [params] unless Array.isArray(params)
+      @$itemChange(builder, change) for change in params
+
+  @_addTextMethods 'folderClass', 'displayName', 'totalCount',
+    'childFolderCount', 'unreadCount'
+
+  @_addItemMethods 'folder'
+
+  @$folders: (builder, params) ->
+    builder.nodeNS NS_M, 'Folders', (builder) =>
+      params = [params] unless Array.isArray(params)
+      @$folder(builder, folderInfo) for folderInfo in params

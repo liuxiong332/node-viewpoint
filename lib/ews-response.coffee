@@ -14,10 +14,21 @@ class RootFolder
     @node.attrVal('IncludesLastItemInRange') is 'true'
 
   items: ->
-    itemsNode = @node.get('m:Items', NAMESPACES)
+    itemsNode = @node.get('t:Items', NAMESPACES)
     for childNode in itemsNode.childNodes()
       if (Constructor = Types[childNode.name()])?
         new Constructor(childNode)
+
+class Items
+  Types.Items = Items
+  constructor: (@node) ->
+
+  items: ->
+    for childNode in @node.childNodes()
+      if (Constructor = Types[childNode.name()])?
+        new Constructor(childNode)
+
+ResponseMsgs = {RootFolder, Items}
 
 module.exports =
 class EWSResponse
@@ -35,6 +46,4 @@ class EWSResponse
     for node in @msgChildren
       nodeName = node.name()
       if nodeName isnt 'ResponseCode'
-        return new EWSResponse[nodeName](node)
-
-  this.RootFolder = RootFolder
+        return new ResponseMsgs[nodeName](node)
