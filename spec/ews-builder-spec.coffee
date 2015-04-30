@@ -34,7 +34,7 @@ describe 'EWSBuilder', ->
     childNodes[1].text().should.equal 'true'
     childNodes[2].text().should.equal 'HTML'
 
-  it '@parentFolderIds', ->
+  it '@$parentFolderIds', ->
     folderIds = [
       {id: 'ID1', changeKey: 'KEY1', type: 'distinguished'}
       {id: 'ID2', changeKey: 'KEY2'}
@@ -50,32 +50,32 @@ describe 'EWSBuilder', ->
     childNodes[1].name().should.equal 'FolderId'
     childNodes[1].attrVals().should.eql {Id: 'ID2', ChangeKey: 'KEY2'}
 
-  it '@isDraft', ->
+  it '@$isDraft', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$isDraft builder, true
     node = doc.get('//t:IsDraft', NS.NAMESPACES)
     node.text().should.equal 'true'
 
-  it '@name', ->
+  it '@$name', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$name builder, 'NAME'
     node = doc.get('//t:Name', NS.NAMESPACES)
     node.text().should.equal 'NAME'
 
-  it '@dateTimeSent', ->
+  it '@$dateTimeSent', ->
     date = new Date
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$dateTimeSent builder, date
     node = doc.get('//t:DateTimeSent', NS.NAMESPACES)
     node.text().should.equal date.toISOString()
 
-  it '@bodyType', ->
+  it '@$bodyType', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$bodyType builder, 'html'
     node = doc.get('//t:BodyType', NS.NAMESPACES)
     node.text().should.equal 'HTML'
 
-  it '@body', ->
+  it '@$body', ->
     param = {bodyType: 'html', content: 'HELLO'}
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$body builder, param
@@ -83,20 +83,20 @@ describe 'EWSBuilder', ->
     node.text().should.equal 'HELLO'
     node.attrVals().should.eql {BodyType: 'HTML'}
 
-  it '@mimeContent', ->
+  it '@$mimeContent', ->
     content = new Buffer('HELLO WORLD')
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$mimeContent builder, content
     node = doc.get('//t:MimeContent', NS.NAMESPACES)
     new Buffer(node.text(), 'base64').compare(content).should.equal 0
 
-  it '@itemId', ->
+  it '@$itemId', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$itemId builder, {id: 'ID', changeKey: 'ChangeKey'}
     node = doc.get('//t:ItemId', NS.NAMESPACES)
     node.attrVals().should.eql {Id: 'ID', ChangeKey: 'ChangeKey'}
 
-  it '@sender', ->
+  it '@$sender', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$sender builder, {name: 'NAME', emailAddress: 'ADDRESS'}
     node = doc.get('//t:Sender', NS.NAMESPACES)
@@ -104,3 +104,11 @@ describe 'EWSBuilder', ->
     mailNode = node.child(0)
     mailNode.get('t:Name', NS.NAMESPACES).text().should.equal 'NAME'
     mailNode.get('t:EmailAddress', NS.NAMESPACES).text().should.equal 'ADDRESS'
+
+  it '@$itemAttachment', ->
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$itemAttachment(builder, {name: 'NAME', contentType: 'TYPE'})
+    node = doc.get('//t:ItemAttachment', NS.NAMESPACES)
+    node.childNodes().length.should.equal 2
+    node.get('t:Name', NS.NAMESPACES).text().should.equal 'NAME'
+    node.get('t:ContentType', NS.NAMESPACES).text().should.equal 'TYPE'

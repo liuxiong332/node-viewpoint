@@ -92,20 +92,10 @@ class EWSBuilder
 
   @_addTextMethods 'contentType', 'contentId', 'contentLocation'
 
-  @$itemAttachment: (builder, params) ->
-    builder.nodeNS NS_T, 'ItemAttachment', (builder) =>
-      for key, param of params when param?
-        this[convertName(key)]?.call(this, builder, param)
-
   @$content: (builder, params) ->
     unless Buffer.isBuffer(params)
       throw new TypeError('params should be Buffer')
     builder.nodeNS NS_T, 'Content', params.toString('base64')
-
-  @$fileAttachment: (builder, params) ->
-    builder.nodeNS NS_T, 'FileAttachment', (builder) =>
-      for key, param of params when param?
-        this[convertName(key)]?.call(this, builder, param)
 
   # `builder` is XMLBuilder
   # `attachments` {Array} each item is attachment params, which like
@@ -189,7 +179,7 @@ class EWSBuilder
       this[convertName(name)] = (builder, params) ->
         @_buildItem(builder, name, params)
 
-  @_addItemMethods 'item', 'message'
+  @_addItemMethods 'itemAttachment', 'fileAttachment', 'item', 'message'
 
   @$items: (builder, params) ->
     params = [params] unless Array.isArray(params)
