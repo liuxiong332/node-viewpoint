@@ -121,3 +121,14 @@ describe 'EWSBuilder', ->
     node.childNodes().length.should.equal 2
     node.child(0).attrVals().should.eql {FieldURI: 'PROP1'}
     node.child(1).attrVals().should.eql {FieldURI: 'PROP2'}
+
+  it '@$folderShape', ->
+    param =
+      baseShape: 'IdOnly'
+      additionalProperties: ['PROP1', 'PROP2']
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$folderShape(builder, param)
+    node = doc.get('//m:FolderShape', NS.NAMESPACES)
+    node.get('t:BaseShape', NS.NAMESPACES).text().should.equal 'IdOnly'
+    apNode = node.get('t:AdditionalProperties', NS.NAMESPACES)
+    apNode.childNodes().length.should.equal 2

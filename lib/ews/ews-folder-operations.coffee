@@ -31,3 +31,7 @@ class EWSFolderOperations extends Mixin
       param = {Traversal: opts.traversal}
       builder.nodeNS NS_MESSAGES, 'FindFolder', param, (builder) ->
         EWSBuilder.$parentFolderIds(builder, opts.parentFolderIds)
+        EWSBuilder.$folderShape(builder, opts.folderShape)
+
+  findFolder: (opts) ->
+    @doSoapRequest @buildFindFolder(opts)

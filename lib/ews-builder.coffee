@@ -217,6 +217,11 @@ class EWSBuilder
       params = [params] unless Array.isArray(params)
       @$fieldURI(builder, info) for info in params
 
+  @$folderShape: (builder, param) ->
+    builder.nodeNS NS_M, 'FolderShape', (builder) =>
+      @$baseShape(builder, param.baseShape)
+      @$additionalProperties(builder, ap) if (ap = param.additionalProperties)?
+
   @_addItemMethods 'appendToItemField', 'setItemField', 'deleteItemField'
 
   # `param` {Object}

@@ -35,3 +35,16 @@ describe 'EWSFolderOperations', ->
     idsNode = folderNode.get('m:FolderIds', NAMESPACES)
     idsNode.childNodes().length.should.equal 1
     idsNode.child(0).attrVals().should.eql {Id: 'myId', ChangeKey: 'changeKey'}
+
+  it 'buildFindFolder', ->
+    operation = new EWSFolderOperations
+    opts =
+      traversal: 'Shadow'
+      parentFolderIds: {id: 'ID'}
+      folderShape: {baseShape: 'Default'}
+    doc = operation.buildFindFolder opts
+
+    folderNode = doc.get('//m:FindFolder', NAMESPACES)
+    folderNode.attrVals().should.eql {Traversal: 'Shadow'}
+    folderNode.get('m:ParentFolderIds', NAMESPACES).should.ok
+    folderNode.get('m:FolderShape', NAMESPACES).should.ok
