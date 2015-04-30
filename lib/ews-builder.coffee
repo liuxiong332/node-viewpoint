@@ -75,9 +75,6 @@ class EWSBuilder
   @$itemId: (builder, params) ->
     builder.nodeNS NS_T, 'ItemId', parseId(params)
 
-  @$parentFolderId: (builder, params) ->
-    builder.nodeNS NS_T, 'ParentFolderId', parseId(params)
-
   @$folderId: (builder, param) ->
     builder.nodeNS NS_T, 'FolderId', parseId(param)
 
@@ -171,6 +168,9 @@ class EWSBuilder
 
   @$toFolderId: (builder, folderId) ->
     _buildFolderIds(builder, 'toFolderId', folderId)
+
+  @$parentFolderId: (builder, params) ->
+    _buildFolderIds(builder, 'parentFolderId', params)
 
   @returnNewItemIds: (builder, param) ->
     builder.nodeNS NS_M, 'ReturnNewItemIds', param
