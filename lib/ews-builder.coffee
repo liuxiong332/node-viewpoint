@@ -141,16 +141,26 @@ class EWSBuilder
   #   every item of `folderIds` is `Object`, for distinguished folderId,
   #   just like {id: <myId>, changeKey: <key>, type: 'distinguished'},
   #   for folderId, the `type` should be ignore
-  @$parentFolderIds: (builder, folderIds) ->
-    folderIds = [folderIds] unless Array.isArray folderIds
-
-    builder.nodeNS NS_M, 'ParentFolderIds', (builder) ->
+  _buildFolderIds = (builder, name, folderIds) ->
+    builder.nodeNS NS_M, pascalCase(name), (builder) ->
+      folderIds = [folderIds] unless Array.isArray folderIds
       for fid in folderIds
         if fid.type is 'distinguished'
           builder.nodeNS NS_T, 'DistinguishedFolderId', parseId(fid)
         else
           builder.nodeNS NS_T, 'FolderId', parseId(fid)
 
+  @$parentFolderIds: (builder, folderIds) ->
+    _buildFolderIds(builder, 'parentFolderIds', folderIds)
+
+  @$savedItemFolderId: (builder, folderId) ->
+    _buildFolderIds(builder, 'savedItemFolderId', folderId)
+
+  @$toFolderId: (builder, folderId) ->
+    _buildFolderIds(builder, 'toFolderId', folderId)
+
+  @returnNewItemIds: (builder, param) ->
+    builder.nodeNS NS_M, 'ReturnNewItemIds', param
   # * `viewOpts` {Object}
   #   * `maxReturned` {Number}
   #   * `offset` {Number}

@@ -4,7 +4,6 @@ EwsBuilder = require '../ews-builder'
 
 module.exports =
 class EWSItemOperations extends Mixin
-
   buildFindItem: (opts={}) ->
     EwsBuilder.build (builder) ->
       traversal = opts['traversal'] ? 'Shallow'
@@ -27,3 +26,50 @@ class EWSItemOperations extends Mixin
 
   getItem: (opts) ->
     @doSoapRequest @buildGetItem(opts)
+
+  buildCreateItem: (opts={}) ->
+    EwsBuilder.build (builder) ->
+      param = {MessageDisposition: opts.messageDisposition}
+      builder.nodeNS NS_MESSAGES, 'CreateItem', param, (builder) ->
+        if opts.savedItemFolderId?
+          EwsBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
+        EwsBuilder.$items(builder, opts.items) if opts.items?
+
+  createItem: (opts) ->
+    @doSoapRequest @buildCreateItem(opts)
+
+  buildCopyOrMoveItem = (nodeName, opts={}) ->
+    EwsBuilder.build (builder) ->
+      builder.nodeNS NS_MESSAGES, nodeName, (builder) ->
+        EwsBuilder.$toFolderId(builder, opts.toFolderId) if opts.toFolderId
+        EwsBuilder.$itemIds(builder, opts.itemIds) if opts.itemIds
+        if opts.returnNewItemIds
+          EwsBuilder.$returnNewItemIds(builder, opts.returnNewItemIds)
+
+  copyItem: (opts) ->
+    @doSoapRequest buildCopyOrMoveItem('CopyItem', opts)
+
+  moveItem: (opts) ->
+    @doSoapRequest buildCopyOrMoveItem('MoveItem', opts)
+  # `opts` {Object}
+  #   `deleteType` {String} can be 'HardDelete', 'SoftDelete',
+  #   'MoveToDeletedItems'
+  buildDeleteItem: (opts={}) ->
+    EwsBuilder.build (builder) ->
+      param = {DeleteType: opts.deleteType}
+      builder.nodeNS NS_MESSAGES, 'DeleteItem', param, (builder) ->
+        EwsBuilder.$itemIds(builder, opts.itemIds)
+
+  deleteItem: (opts) ->
+    @doSoapRequest @buildDeleteItem(opts)
+
+  buildSendItem: (opts={}) ->
+    EwsBuilder.build (builder) ->
+      param = {SaveItemToFolder: opts.saveItemToFolder}
+      builder.nodeNS NS_MESSAGES, 'SendItem', param, (builder) ->
+        EwsBuilder.$itemIds(builder, opts.itemIds)
+        if opts.savedItemFolderId
+          EwsBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
+
+  SendItem: (opts) ->
+    @doSoapRequest @buildSendItem(opts)
