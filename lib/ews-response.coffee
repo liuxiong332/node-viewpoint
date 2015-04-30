@@ -20,7 +20,6 @@ class RootFolder
         new Constructor(childNode)
 
 class Items
-  Types.Items = Items
   constructor: (@node) ->
 
   items: ->
@@ -28,8 +27,7 @@ class Items
       if (Constructor = Types[childNode.name()])?
         new Constructor(childNode)
 
-
-ResponseMsgs = {RootFolder, Items}
+ResponseMsgs = {RootFolder, Items, Folders: Items}
 
 module.exports =
 class EWSResponse

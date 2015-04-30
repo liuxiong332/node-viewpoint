@@ -163,6 +163,9 @@ class EWSBuilder
   @$parentFolderIds: (builder, folderIds) ->
     _buildFolderIds(builder, 'parentFolderIds', folderIds)
 
+  @$folderIds: (builder, folderIds) ->
+    _buildFolderIds(builder, 'folderIds', folderIds)
+
   @$savedItemFolderId: (builder, folderId) ->
     _buildFolderIds(builder, 'savedItemFolderId', folderId)
 
