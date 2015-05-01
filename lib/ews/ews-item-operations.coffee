@@ -75,7 +75,7 @@ class EWSItemOperations extends Mixin
 
   buildUpdateItem: (opts={}) ->
     EWSBuilder.build (builder) ->
-      param = {MessageDisposition: opts.messageDisposition}
+      param = {MessageDisposition: opts.messageDisposition ? 'SaveOnly'}
       builder.nodeNS NS_MESSAGES, 'UpdateItem', param, (builder) ->
         if opts.savedItemFolderId
           EWSBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
