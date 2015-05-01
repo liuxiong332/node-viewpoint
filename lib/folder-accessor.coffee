@@ -37,7 +37,7 @@ class FolderAccessor extends Mixin
 
   _getFolderArgs: (folderId, opts) ->
     params =
-      folderShape: baseShape: opts.shape ? 'Default'
+      folderShape: {baseShape: opts.shape ? 'Default'}
       folderIds: @_getItemIds(folderId)
     _.extend params, opts
 
