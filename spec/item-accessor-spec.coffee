@@ -25,7 +25,7 @@ describe 'ItemAccessor', ->
     args.toFolderId.should.eql {id: 'Folder1'}
 
   it '_markReadArgs', ->
-    args = new ItemAccessor()._markReadArgs(['ID1', 'ID2'])
+    args = new ItemAccessor()._markReadArgs([{id: 'ID1'}, {id: 'ID2'}])
     args.itemChanges.length.should.equal 2
     args.itemChanges[0].itemId.should.eql {id: 'ID1'}
     setFields = args.itemChanges[0].setFields
