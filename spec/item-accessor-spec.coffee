@@ -31,3 +31,14 @@ describe 'ItemAccessor', ->
     setFields = args.itemChanges[0].setFields
     setFields.fieldURI.should.equal 'message:IsRead'
     setFields.message.should.eql {isRead: true}
+
+  it '_syncItemsArgs', ->
+    opts =
+      shape: 'Default'
+      folderId: 'ID'
+      syncState: 'state'
+      maxReturned: 100
+    args = new ItemAccessor()._syncItemsArgs opts
+    args.itemShape.baseShape.should.equal 'Default'
+    args.syncFolderId.should.eql {id: 'ID'}
+    args.maxChangesReturned.should.equal 100

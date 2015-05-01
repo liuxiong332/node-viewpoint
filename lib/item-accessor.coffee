@@ -56,12 +56,7 @@ class ItemAccessor extends Mixin
       @ews.createItem _.extend params
 
   syncItems: (opts) ->
-    params =
-      itemShape: opts.itemShape ? {baseShape: opts.shape? 'IdOnly'}
-      syncFolderId: opts.folderId ? opts.syncFolderId
-      syncState: opts.syncState
-      maxChangesReturned: opts.maxReturned
-    @ews.syncFolderItems params
+    @ews.syncFolderItems @_syncItemsArgs(opts)
 
   # private methods
   _getItemId: (id) ->
@@ -94,3 +89,10 @@ class ItemAccessor extends Mixin
     itemChanges = for itemId in items
       {itemId, setFields: {fieldURI: 'message:IsRead', message: isRead: true}}
     {itemChanges}
+
+  _syncItemsArgs: (opts) ->
+    params =
+      itemShape: {baseShape: opts.shape ? 'IdOnly'}
+      syncFolderId: @_getItemId(opts.folderId)
+    params.maxChangesReturned = opts.maxReturned if opts.maxReturned
+    _.extend params, opts
