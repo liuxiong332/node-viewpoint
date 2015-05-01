@@ -79,14 +79,12 @@ class ItemAccessor extends Mixin
   _findItemsArgs: (opts) ->
     args =
       traversal: 'Shallow'
-      itemShape: baseShape: 'Default'
-    folderId = opts.folderId
-    args.parentFolderIds =
-      if _.isString(folderId) then {id: folderId} else folderId
+      itemShape: baseShape: opts.shape ? 'Default'
+    args.parentFolderIds = @_getItemId(opts.folderId)
     _.extend args, opts
 
   _moveCopyItemsArgs: (items, folder) ->
-    toFolderId: if _.isString(folder) then {id: folder} else folder
+    toFolderId: @_getItemId(folder)
     itemIds: @_getItemIds(items)
     returnNewItemIds: true
 
