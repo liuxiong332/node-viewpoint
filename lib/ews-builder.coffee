@@ -172,8 +172,17 @@ class EWSBuilder
   @$parentFolderId: (builder, params) ->
     _buildFolderIds(builder, 'parentFolderId', params)
 
-  @returnNewItemIds: (builder, param) ->
+  @$syncFolderId: (builder, params) ->
+    _buildFolderIds(builder, 'syncFolderId', params)
+
+  @$returnNewItemIds: (builder, param) ->
     builder.nodeNS NS_M, 'ReturnNewItemIds', param
+
+  @$syncState: (builder, param) ->
+    builder.nodeNS NS_M, 'SyncState', param
+
+  @$maxChangesReturned: (builder, param) ->
+    builder.nodeNS NS_M, 'MaxChangesReturned', param
   # * `viewOpts` {Object}
   #   * `maxReturned` {Number}
   #   * `offset` {Number}
