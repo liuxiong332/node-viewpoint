@@ -231,12 +231,12 @@ class EWSBuilder
         @$deleteItemField(builder, field) for field in deleteFields
 
   @$itemChange: (builder, param) ->
-    builder.nodeNS NS_T, 'ItemChange', (builder) ->
+    builder.nodeNS NS_T, 'ItemChange', (builder) =>
       @$itemId(builder, param.itemId)
       @$updates(builder, param)
 
   @$itemChanges: (builder, params) ->
-    builder.nodeNS NS_T, 'ItemChanges', (builder) =>
+    builder.nodeNS NS_M, 'ItemChanges', (builder) =>
       params = [params] unless Array.isArray(params)
       @$itemChange(builder, change) for change in params
 

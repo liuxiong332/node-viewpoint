@@ -37,7 +37,7 @@ class EWSItemOperations extends Mixin
   createItem: (opts) ->
     @doSoapRequest @buildCreateItem(opts)
 
-  buildCopyOrMoveItem = (nodeName, opts={}) ->
+  buildCopyOrMoveItem: (nodeName, opts={}) ->
     EwsBuilder.build (builder) ->
       builder.nodeNS NS_MESSAGES, nodeName, (builder) ->
         EwsBuilder.$toFolderId(builder, opts.toFolderId) if opts.toFolderId
@@ -46,10 +46,10 @@ class EWSItemOperations extends Mixin
           EwsBuilder.$returnNewItemIds(builder, opts.returnNewItemIds)
 
   copyItem: (opts) ->
-    @doSoapRequest buildCopyOrMoveItem('CopyItem', opts)
+    @doSoapRequest @buildCopyOrMoveItem('CopyItem', opts)
 
   moveItem: (opts) ->
-    @doSoapRequest buildCopyOrMoveItem('MoveItem', opts)
+    @doSoapRequest @buildCopyOrMoveItem('MoveItem', opts)
   # `opts` {Object}
   #   `deleteType` {String} can be 'HardDelete', 'SoftDelete',
   #   'MoveToDeletedItems'
@@ -76,7 +76,7 @@ class EWSItemOperations extends Mixin
   buildUpdateItem: (opts={}) ->
     EwsBuilder.build (builder) ->
       param = {MessageDisposition: opts.messageDisposition}
-      builder.nodeNS NS_MESSAGES 'UpdateItem', param, (builder) ->
+      builder.nodeNS NS_MESSAGES, 'UpdateItem', param, (builder) ->
         if opts.savedItemFolderId
           EwsBuilder.$savedItemFolderId(builder, opts.savedItemFolderId)
         EwsBuilder.$itemChanges(builder, opts.itemChanges)

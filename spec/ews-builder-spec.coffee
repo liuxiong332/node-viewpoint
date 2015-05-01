@@ -147,3 +147,32 @@ describe 'EWSBuilder', ->
     node.get('t:BaseShape', NS.NAMESPACES).text().should.equal 'IdOnly'
     apNode = node.get('t:AdditionalProperties', NS.NAMESPACES)
     apNode.childNodes().length.should.equal 2
+
+  it '@$updates', ->
+    param =
+      appendFields:
+        fieldURI: 'item:Sensitivity'
+        message: {sensitivity: 'Normal'}
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$updates builder, param
+
+    node = doc.get('//t:Updates', NS.NAMESPACES)
+    appendNode = node.child(0)
+    appendNode.name().should.equal 'AppendToItemField'
+    appendNode.childNodes().length.should.equal 2
+    appendNode.get('t:FieldURI', NS.NAMESPACES).should.ok
+    appendNode.get('t:Message', NS.NAMESPACES).should.ok
+
+  it '@$itemChanges', ->
+    param =
+      itemId: {id: 'ID'}
+      appendFields:
+        fieldURI: 'item:Sensitivity'
+        message: {sensitivity: 'Normal'}
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$itemChanges builder, param
+
+    node = doc.get('//m:ItemChanges', NS.NAMESPACES)
+    itemChange = node.get('t:ItemChange', NS.NAMESPACES)
+    itemChange.get('t:ItemId', NS.NAMESPACES).should.ok
+    itemChange.get('t:Updates', NS.NAMESPACES).should.ok
