@@ -1,4 +1,6 @@
 EWSItemOperations = require './ews/ews-item-operations'
+EWSFolderOperations = require './ews/ews-folder-operations'
+EWSSyncOperations = require './ews/ews-sync-operations'
 RequestClient = require './http/request-client'
 EWSResponse = require './ews-response'
 libxml = require 'libxmljs'
@@ -13,6 +15,8 @@ class SoapError extends Error
 module.exports =
 class EWSWebService
   EWSItemOperations.includeInto(this)
+  EWSFolderOperations.includeInto(this)
+  EWSSyncOperations.includeInto(this)
   RequestClient.includeInto(this)
 
   constructor: ->
