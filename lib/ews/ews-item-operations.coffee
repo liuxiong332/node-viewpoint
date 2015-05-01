@@ -64,6 +64,7 @@ class EWSItemOperations extends Mixin
 
   buildSendItem: (opts={}) ->
     EWSBuilder.build (builder) ->
+      opts.saveItemToFolder ?= opts.savedItemFolderId?
       param = {SaveItemToFolder: opts.saveItemToFolder}
       builder.nodeNS NS_MESSAGES, 'SendItem', param, (builder) ->
         EWSBuilder.$itemIds(builder, opts.itemIds)

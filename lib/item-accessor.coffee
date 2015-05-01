@@ -34,14 +34,36 @@ class ItemAccessor extends Mixin
   # `opts` {Object}
   #   `folderId` the folder that items saved
   #   `items` {Object} or `Array` the message item
-  saveItem: (opts) ->
+  saveItems: (opts) ->
     params = _.clone(opts)
     if opts.folderId
       params.savedItemFolderId = @_getItemId(opts.folderId)
     @ews.createItem params
 
-  sendItem: (opts) ->
-    
+  sendItems: (opts) ->
+    if opts.itemIds
+      @ews.sendItem {itemIds: @_getItemIds(opts.itemIds)}
+    else if opts.items
+      @ews.createItem _.extend opts, {messageDisposition: 'SendOnly'}
+
+  sendAndSaveItems: (opts) ->
+    params = savedItemFolderId: @_getItemId(opts.folderId)
+    if opts.itemIds
+      @ews.sendItem _.extend(params, itemIds: @_getItemIds(opts.itemIds))
+    else if opts.items
+      _.extend params,
+        items: opts.items, messageDisposition: 'SendAndSaveCopy'
+      @ews.createItem _.extend params
+
+  syncItems: (opts) ->
+    params =
+      itemShape: opts.itemShape ? {baseShape: opts.shape? 'IdOnly'}
+      syncFolderId: opts.folderId ? opts.syncFolderId
+      syncState: opts.syncState
+      maxChangesReturned: opts.maxReturned
+    @ews.syncFolderItems params
+
+  # private methods
   _getItemId: (id) ->
     if _.isString(id) then {id: id} else id
 
