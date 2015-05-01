@@ -8,11 +8,10 @@ class EWSItemOperations extends Mixin
     EwsBuilder.build (builder) ->
       traversal = opts['traversal'] ? 'Shallow'
       builder.nodeNS NS_MESSAGES, 'FindItem', Traversal: traversal, (builder) ->
-        EwsBuilder.$itemShape(builder, opts.itemShape) if opts.itemShape?
-        if (pid = opts.parentFolderIds)?
-          EwsBuilder.$parentFolderIds(builder, pid)
-        if opts.indexedPageItemView?
-          EwsBuilder.$indexedPageItemView builder, opts.indexedPageItemView
+        EwsBuilder.$itemShape(builder, opts.itemShape)
+        EwsBuilder.$parentFolderIds(builder, opts.parentFolderIds)
+        if (itemView = opts.indexedPageItemView)?
+          EwsBuilder.$indexedPageItemView builder, itemView
 
   # @param [Object] options traversal, baseShape, parentFolderId
   findItem: (opts) ->

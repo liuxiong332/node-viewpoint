@@ -111,6 +111,15 @@ describe 'EWSBuilder', ->
     text = doc.get('//t:Content', NS.NAMESPACES).text()
     new Buffer(text, 'base64').toString().should.equal 'HELLO'
 
+  it '@$indexedPageItemView', ->
+    param = {maxReturned: 100, offset: 10, basePoint: 'End'}
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$indexedPageItemView(builder, param)
+
+    node = doc.get('//m:IndexedPageItemView', NS.NAMESPACES)
+    node.attrVals().should.eql
+      MaxEntriesReturned: '100', Offset: '10', BasePoint: 'End'
+
   it '@$itemAttachment', ->
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$itemAttachment(builder, {name: 'NAME', contentType: 'TYPE'})

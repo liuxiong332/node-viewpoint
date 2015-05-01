@@ -166,13 +166,13 @@ class EWSBuilder
   # * `viewOpts` {Object}
   #   * `maxReturned` {Number}
   #   * `offset` {Number}
-  #   * `basePoint` {String} 'beginning' or 'end'
+  #   * `basePoint` {String} 'Beginning' or 'End'
   @$indexedPageItemView: (builder, viewOpts) ->
     params =
       MaxEntriesReturned: viewOpts.maxReturned
       Offset: viewOpts.offset.toString()
-      BasePoint: pascalCase(viewOpts.basePoint)
-    builder.nodeNS NS_T, 'IndexedPageViewItemView', params
+      BasePoint: viewOpts.basePoint
+    builder.nodeNS NS_M, 'IndexedPageItemView', params
 
   # `itemIds` {Array} or 'Object'
   #   every item of `itemIds` is 'Object', like {id: <id>, changeKey: <key>}

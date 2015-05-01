@@ -7,7 +7,11 @@ describe 'EWSItemOperations', ->
     operation = new EWSItemOperations
     opts =
       itemShape: baseShape: 'idOnly'
-      folderIds: {id: 'myId', changeKey: 'changeKey'}
+      parentFolderIds: {id: 'myId', changeKey: 'changeKey'}
+      indexedPageItemView: {maxReturned: 10, offset: 10, basePoint: 'End'}
     doc = operation.buildFindItem opts
+
     findItemNode = doc.get('//m:FindItem', NAMESPACES)
-    findItemNode.should.ok
+    findItemNode.get('m:ItemShape', NAMESPACES).should.ok
+    findItemNode.get('m:ParentFolderIds', NAMESPACES).should.ok
+    findItemNode.get('m:IndexedPageItemView', NAMESPACES).should.ok
