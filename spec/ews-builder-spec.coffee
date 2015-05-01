@@ -20,7 +20,7 @@ describe 'EWSBuilder', ->
     itemShape =
       baseShape: 'idOnly'
       includeMimeContent: true
-      bodyType: 'html'
+      bodyType: 'HTML'
 
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$itemShape builder, itemShape
@@ -71,12 +71,12 @@ describe 'EWSBuilder', ->
 
   it '@$bodyType', ->
     doc = EWSBuilder.build (builder) ->
-      EWSBuilder.$bodyType builder, 'html'
+      EWSBuilder.$bodyType builder, 'HTML'
     node = doc.get('//t:BodyType', NS.NAMESPACES)
     node.text().should.equal 'HTML'
 
   it '@$body', ->
-    param = {bodyType: 'html', content: 'HELLO'}
+    param = {bodyType: 'HTML', content: 'HELLO'}
     doc = EWSBuilder.build (builder) ->
       EWSBuilder.$body builder, param
     node = doc.get('//t:Body', NS.NAMESPACES)
@@ -104,6 +104,12 @@ describe 'EWSBuilder', ->
     mailNode = node.child(0)
     mailNode.get('t:Name', NS.NAMESPACES).text().should.equal 'NAME'
     mailNode.get('t:EmailAddress', NS.NAMESPACES).text().should.equal 'ADDRESS'
+
+  it '@$content', ->
+    doc = EWSBuilder.build (builder) ->
+      EWSBuilder.$content builder, new Buffer('HELLO')
+    text = doc.get('//t:Content', NS.NAMESPACES).text()
+    new Buffer(text, 'base64').toString().should.equal 'HELLO'
 
   it '@$itemAttachment', ->
     doc = EWSBuilder.build (builder) ->

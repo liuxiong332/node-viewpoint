@@ -36,27 +36,17 @@ class EWSBuilder
 
   @_addTimeMethods 'dateTimeSent', 'dateTimeCreated'
 
-  convertBodyType = (body) ->
-    switch body
-      when 'html' then 'HTML'
-      when 'text' then 'Text'
-      when 'best' then 'Best'
-      else bodyType
-
-  @$bodyType: (builder, type) ->
-    builder.nodeNS NS_T, 'BodyType', convertBodyType(type) if type?
-
   @$body: (builder, body) ->
     params = {}
     if _.isString body
       content = body
     else
-      params.BodyType = convertBodyType(body.bodyType) if body.bodyType?
+      params.BodyType = body.bodyType if body.bodyType?
       params.IsTruncated = body.isTruncated if body.isTruncated?
       content = body.content
     builder.nodeNS NS_T, 'Body', params, content
 
-  @_addTextMethods 'name', 'emailAddress'
+  @_addTextMethods 'name', 'emailAddress', 'bodyType'
 
   @$mimeContent: (builder, params) ->
     attrs = {}
@@ -157,23 +147,13 @@ class EWSBuilder
         else
           builder.nodeNS NS_T, 'FolderId', parseId(fid)
 
-  @$parentFolderIds: (builder, folderIds) ->
-    _buildFolderIds(builder, 'parentFolderIds', folderIds)
+  @_addFolderIdMethods: (names...) ->
+    names.forEach (name) =>
+      this[convertName(name)] = (builder, params) ->
+        _buildFolderIds(builder, name, params)
 
-  @$folderIds: (builder, folderIds) ->
-    _buildFolderIds(builder, 'folderIds', folderIds)
-
-  @$savedItemFolderId: (builder, folderId) ->
-    _buildFolderIds(builder, 'savedItemFolderId', folderId)
-
-  @$toFolderId: (builder, folderId) ->
-    _buildFolderIds(builder, 'toFolderId', folderId)
-
-  @$parentFolderId: (builder, params) ->
-    _buildFolderIds(builder, 'parentFolderId', params)
-
-  @$syncFolderId: (builder, params) ->
-    _buildFolderIds(builder, 'syncFolderId', params)
+  @_addFolderIdMethods 'parentFolderIds', 'folderIds', 'savedItemFolderId',
+    'toFolderId', 'parentFolderId', 'syncFolderId'
 
   @$returnNewItemIds: (builder, param) ->
     builder.nodeNS NS_M, 'ReturnNewItemIds', param
