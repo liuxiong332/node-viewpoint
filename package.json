@@ -1,15 +1,16 @@
 {
   "name": "node-viewpoint",
   "description": "the exchange API for nodejs module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/liuxiong332/node-viewpoint",
   "bugs": "https://github.com/liuxiong332/node-viewpoint/issues",
   "license": "MIT",
-  "main": "dist/lib/node-viewpoint.js",
+  "main": "dist/ews-client.js",
   "author": {
     "name": "liuxiong",
     "email": "liuxiong332@163.com"
   },
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "https://github.com/liuxiong332/node-viewpoint"
