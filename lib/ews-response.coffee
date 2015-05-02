@@ -1,6 +1,7 @@
 {NAMESPACES} = require './ews-ns'
 Item = require './types/item'
 Message = require './types/message'
+Mixin = require 'mixto'
 
 Types = {Item, Message}
 
@@ -35,9 +36,8 @@ class Items
 
 ResponseMsgs = {RootFolder, Items, Folders: Items}
 
-module.exports =
-class EWSResponse
-  constructor: (@doc) ->
+class ResponseParser extends Mixin
+  parseResponse: ->
     @resMsgs = @doc.get('//m:ResponseMessages', NAMESPACES)
 
     _msgNode = @resMsgs.child(0)
@@ -45,6 +45,14 @@ class EWSResponse
     unless @isSuccess
       @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
+    @resMsg = _msgNode
+
+module.exports =
+class EWSResponse
+  ResponseParser.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
 
   _responseNode: (resMsg) ->
     for node in resMsg.childNodes()
@@ -58,3 +66,18 @@ class EWSResponse
   responses: ->
     for resNode in @resMsgs.childNodes()
       @_responseNode resNode
+
+class EWSSyncResponse
+  ResponseParser.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
+
+  syncState: -> @resMsg.get('m:SyncState', NAMESPACES).text()
+
+  includesLastItemInRange: ->
+    @resMsg.get('m:IncludesLastItemInRange', NAMESPACES).text() is 'true'
+
+  creates: ->
+  updates: ->
+  deletes: ->

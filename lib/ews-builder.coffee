@@ -39,6 +39,7 @@ class EWSBuilder
   @$body: (builder, body) ->
     params = {}
     if _.isString body
+      params.BodyType = 'HTML'
       content = body
     else
       params.BodyType = body.bodyType if body.bodyType?

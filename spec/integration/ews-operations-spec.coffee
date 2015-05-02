@@ -2,7 +2,7 @@ should = require 'should'
 EWSClient = require '../../lib/ews-client'
 config = require './config.json'
 
-describe 'ews operations integration', ->
+describe.skip 'ews operations integration', ->
 
   TRASH_ID = {id: 'deleteditems', type: 'distinguished'}
   [client, itemIds] = []
@@ -31,3 +31,20 @@ describe 'ews operations integration', ->
         itemInfos[0].itemId().should.eql itemArray[0].itemId()
         done()
       .catch (err) -> done(err)
+
+  it 'saveItems & deleteItems', (done) ->
+    params =
+      folderId: TRASH_ID
+      items:
+        subject: 'Hello, World', body: '<body>Hello</body>'
+    client.saveItems(params).then (res) ->
+      items = res.response().items()
+      items[0].itemId().should.ok
+
+      client.deleteItems items[0].itemId()
+      .then -> done()
+      .catch (err) -> done(err)
+
+  # it.only 'syncItems', (done) ->
+  #   client.syncItems({folderId: TRASH_ID, maxReturned: 2}).then (res) ->
+  #     done()
