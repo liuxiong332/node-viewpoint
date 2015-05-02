@@ -1,5 +1,5 @@
 should = require 'should'
-EwsResponse = require '../lib/ews-response'
+{EWSResponse, EWSSyncResponse} = require '../lib/ews-response'
 Builder = require 'libxmljs-builder'
 NS = require '../lib/ews-ns'
 EWSBuilder = require '../lib/ews-builder'
@@ -20,7 +20,7 @@ buildRootFolder = (callback) ->
         IncludesLastItemInRange: 'true'
       builder.nodeNS NS_M, 'RootFolder', params, callback
 
-describe 'EwsResponse', ->
+describe 'EWSResponse', ->
   it 'RootFolder', ->
     doc = buildRootFolder (builder) ->
       params = [
@@ -30,7 +30,7 @@ describe 'EwsResponse', ->
       builder.nodeNS NS_T, 'Items', (builder) ->
         EWSBuilder.$message(builder, itemInfo) for itemInfo in params
 
-    res = new EwsResponse(doc)
+    res = new EWSResponse(doc)
     res.isSuccess.should.ok
     resMsg = res.response()
     resMsg.totalItemsInView().should.equal 10

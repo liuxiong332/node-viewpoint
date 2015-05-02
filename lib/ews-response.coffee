@@ -53,7 +53,6 @@ class ResponseParser extends Mixin
       if ResponseMsgs[nodeName]
         return new ResponseMsgs[nodeName](node)
 
-module.exports =
 class EWSResponse
   ResponseParser.includeInto this
 
@@ -73,10 +72,10 @@ class EWSSyncResponse
     @parseResponse()
     @changesNode = @resMsgNode.get('m:Changes', NAMESPACES)
 
-  syncState: -> @resMsg.get('m:SyncState', NAMESPACES).text()
+  syncState: -> @resMsgNode.get('m:SyncState', NAMESPACES).text()
 
   includesLastItemInRange: ->
-    @resMsg.get('m:IncludesLastItemInRange', NAMESPACES).text() is 'true'
+    @resMsgNode.get('m:IncludesLastItemInRange', NAMESPACES).text() is 'true'
 
   creates: ->
     createNode = @changesNode.get('t:Create', NAMESPACES)
@@ -89,3 +88,5 @@ class EWSSyncResponse
   deletes: ->
     deleteNode = @changesNode.get('t:Delete', NAMESPACES)
     if deleteNode then @parseNodes(deleteNode) else []
+
+module.exports = {EWSResponse, EWSSyncResponse}

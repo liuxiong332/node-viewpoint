@@ -2,7 +2,7 @@ EWSItemOperations = require './ews/ews-item-operations'
 EWSFolderOperations = require './ews/ews-folder-operations'
 EWSSyncOperations = require './ews/ews-sync-operations'
 RequestClient = require './http/request-client'
-EWSResponse = require './ews-response'
+{EWSResponse} = require './ews-response'
 libxml = require 'libxmljs'
 
 class SoapError extends Error
