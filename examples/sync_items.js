@@ -10,15 +10,21 @@ var serviceOptions = {
 var client = new EWSClient(config.username, config.password, config.url,
   serviceOptions);
 
-TRASH_ID = {id: 'deleteditems', type: 'distinguished'}
-
-client.findItems({
-  shape: 'IdOnly',
-  folderId: TRASH_ID,
-  indexedPageItemView: {offset: 0, maxReturned: '6'}
+client.syncItems({
+  shape: 'Default',
+  syncState: '',
+  maxReturned: 10,
+  folderId: {id: 'deleteditems', type: 'distinguished'}
 }).then(function(res) {
   console.log('Done');
-
+  console.log(res);
+  res.forEach(function(item) {
+    var info = {
+      from: {name: item.from().name, email: item.from().emailAddress},
+      subject: item.subject()
+    };
+    console.log(JSON.stringify(info, null, 2));
+  });
 }).catch(function(err) {
-  throw err;
+  console.log(err.stack);
 });

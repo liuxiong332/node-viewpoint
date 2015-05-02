@@ -45,4 +45,3 @@ class HttpRequestPool
 
   get: (url, options) -> request.call(this, 'GET', url, options)
   post: (url, options) -> request.call(this, 'POST', url, options)
-

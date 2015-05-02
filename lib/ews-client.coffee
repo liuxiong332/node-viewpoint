@@ -2,6 +2,7 @@ ItemAccessor = require './item-accessor'
 FolderAccessor = require './folder-accessor'
 EWSWebService = require './ews-web-service'
 
+module.exports =
 class EWSClient
   ItemAccessor.includeInto this
   FolderAccessor.includeInto this

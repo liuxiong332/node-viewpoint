@@ -19,6 +19,12 @@ class RootFolder
       if (Constructor = Types[childNode.name()])?
         new Constructor(childNode)
 
+  folders: ->
+    foldersNode = @node.get('t:Folders', NAMESPACES)
+    for childNode in foldersNode.childNodes()
+      if (Constructor = Types[childNode.name()])?
+        new Constructor(childNode)
+
 class Items
   constructor: (@node) ->
 
@@ -43,7 +49,7 @@ class EWSResponse
   _responseNode: (resMsg) ->
     for node in resMsg.childNodes()
       nodeName = node.name()
-      if nodeName isnt 'ResponseCode'
+      if ResponseMsgs[nodeName]
         return new ResponseMsgs[nodeName](node)
 
   response: ->

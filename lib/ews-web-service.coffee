@@ -30,4 +30,4 @@ class EWSWebService
           responseCode: ewsRes.responseCode
           messageText: ewsRes.messageText
         throw new SoapError "SOAP Error:#{JSON.stringify(param, null, 2)}"
-      ewsRes.responses
+      ewsRes

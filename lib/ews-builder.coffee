@@ -171,7 +171,7 @@ class EWSBuilder
     params =
       MaxEntriesReturned: viewOpts.maxReturned
       Offset: viewOpts.offset.toString()
-      BasePoint: viewOpts.basePoint
+      BasePoint: viewOpts.basePoint ? 'Beginning'
     builder.nodeNS NS_M, 'IndexedPageItemView', params
 
   # `itemIds` {Array} or 'Object'
