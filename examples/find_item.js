@@ -17,8 +17,10 @@ client.findItems({
   folderId: TRASH_ID,
   indexedPageItemView: {offset: 0, maxReturned: '6'}
 }).then(function(res) {
+  res.response().items().forEach(function(item) {
+    console.log(item.itemId());
+  });
   console.log('Done');
-
 }).catch(function(err) {
   throw err;
 });
