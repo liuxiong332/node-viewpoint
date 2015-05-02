@@ -31,7 +31,7 @@ gulp.task('istanbul', function (cb) {
     .on('finish', function () {
       gulp.src(paths.tests)
         .pipe(plugins.plumber(plumberConf))
-        .pipe(plugins.mocha({reporter: CI ? 'spec' : 'nyan'}))
+        .pipe(plugins.mocha({reporter: CI ? 'spec' : 'nyan', timeout: '5s'}))
         .pipe(plugins.coffeeIstanbul.writeReports()) // Creating the reports after tests runned
         .on('finish', function() {
           process.chdir(__dirname);

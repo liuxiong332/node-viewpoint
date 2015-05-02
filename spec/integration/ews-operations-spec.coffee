@@ -2,16 +2,16 @@ should = require 'should'
 EWSClient = require '../../lib/ews-client'
 config = require './config.json'
 
-describe.only 'ews operations integration', ->
+describe 'ews operations integration', ->
 
   TRASH_ID = {id: 'deleteditems', type: 'distinguished'}
-  client = null
+  [client, itemIds] = []
 
   beforeEach ->
     opts =
       rejectUnauthorized: false
-      # proxy: {host: 'localhost', port: 8888}
-      agent: new require('https').Agent({keepAlive: true})
+      proxy: {host: 'localhost', port: 8888}
+      agent: new require('http').Agent({keepAlive: true})
     client = new EWSClient config.username, config.password, config.url, opts
 
   it 'findItems', (done) ->
@@ -23,4 +23,11 @@ describe.only 'ews operations integration', ->
       itemArray = res.response().items()
       itemArray.length.should.equal 2
       Object.keys(itemArray[0].itemId()).should.eql ['id', 'changeKey']
-      done()
+
+      client.getItem(itemArray[0].itemId())
+      .then (res) ->
+        itemInfos = res.response().items()
+        itemInfos.length.should.equal 1
+        itemInfos[0].itemId().should.eql itemArray[0].itemId()
+        done()
+      .catch (err) -> done(err)

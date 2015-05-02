@@ -7,8 +7,7 @@ class ItemAccessor extends Mixin
   # `opts` {Object} more options
   #   'shape' {String} baseShape value
   getItem: (itemId, opts={}) ->
-    args = @_getItemArgs(itemId, opts)
-    @ews.getItem(args).then (responses) -> responses[0]
+    @ews.getItem @_getItemArgs(itemId, opts)
 
   getItems: (itemIds, opts={}) ->
     @ews.getItem @_getItemArgs(itemIds, opts)
