@@ -47,23 +47,23 @@ class ResponseParser extends Mixin
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
     @resMsgNode = _msgNode
 
-  parseNodes: (parent) ->
-    for node in parent.childNodes()
-      nodeName = node.name()
-      if ResponseMsgs[nodeName]
-        return new ResponseMsgs[nodeName](node)
-
 class EWSResponse
   ResponseParser.includeInto this
 
   constructor: (@doc) ->
     @parseResponse()
 
+  _responseNode: (resMsg) ->
+    for node in resMsg.childNodes()
+      nodeName = node.name()
+      if (Constructor = ResponseMsgs[nodeName])?
+        return new Constructor(node)
+
   response: ->
-    @parseNodes @resMsgsNode.child(0)
+    @_responseNode @resMsgsNode.child(0)
 
   responses: ->
-    @parseNodes resNode for resNode in @resMsgsNode.childNodes()
+    @_responseNode resNode for resNode in @resMsgsNode.childNodes()
 
 class EWSSyncResponse
   ResponseParser.includeInto this
@@ -77,16 +77,22 @@ class EWSSyncResponse
   includesLastItemInRange: ->
     @resMsgNode.get('m:IncludesLastItemInRange', NAMESPACES).text() is 'true'
 
+  _getChildItems: (path) ->
+    createNodes = @changesNode.find(path, NAMESPACES)
+    items = []
+    for createNode in createNodes
+      node = createNode.child(0)
+      if (Constructor = Types[node.name()])?
+        items.push new Constructor(node)
+    items
+
   creates: ->
-    createNode = @changesNode.get('t:Create', NAMESPACES)
-    if createNode then @parseNodes(createNode) else []
+    @_getChildItems 't:Create'
 
   updates: ->
-    updateNode = @changesNode.get('t:Update', NAMESPACES)
-    if updateNode then @parseNodes(updateNode) else []
+    @_getChildItems 't:Update'
 
   deletes: ->
-    deleteNode = @changesNode.get('t:Delete', NAMESPACES)
-    if deleteNode then @parseNodes(deleteNode) else []
+    @_getChildItems 't:Delete'
 
 module.exports = {EWSResponse, EWSSyncResponse}
