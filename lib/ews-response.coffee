@@ -133,4 +133,5 @@ class EWSSyncResponse
   deletes: ->
     @_getChildItems 't:Delete'
 
-module.exports = {EWSResponse, EWSSyncResponse}
+module.exports = {EWSResponse, EWSRootFolderResponse, EWSItemsResponse,
+  EWSFoldersResponse, EWSSyncResponse}

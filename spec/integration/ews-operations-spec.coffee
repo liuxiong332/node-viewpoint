@@ -21,13 +21,13 @@ describe.skip 'ews operations integration', ->
         folderId: TRASH_ID
         indexedPageItemView: {offset: 0, maxReturned: 2}
       client.findItems(params).then (res) ->
-        itemArray = res.response().items()
+        itemArray = res.items()
         itemArray.length.should.equal 2
         Object.keys(itemArray[0].itemId()).should.eql ['id', 'changeKey']
 
         client.getItem(itemArray[0].itemId())
         .then (res) ->
-          itemInfos = res.response().items()
+          itemInfos = res.items()
           itemInfos.length.should.equal 1
           itemInfos[0].itemId().should.eql itemArray[0].itemId()
           done()
@@ -39,7 +39,7 @@ describe.skip 'ews operations integration', ->
         items:
           subject: 'Hello, World', body: '<body>Hello</body>'
       client.saveItems(params).then (res) ->
-        items = res.response().items()
+        items = res.items()
         items[0].itemId().should.ok
 
         client.deleteItems items[0].itemId()

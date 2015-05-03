@@ -15,7 +15,7 @@ class EWSItemOperations extends Mixin
 
   # @param [Object] options traversal, baseShape, parentFolderId
   findItem: (opts) ->
-    @doSoapRequest @buildFindItem(opts)
+    @doSoapRequest @buildFindItem(opts), 'EWSRootFolderResponse'
 
   buildGetItem: (opts={}) ->
     EWSBuilder.build (builder) ->
@@ -24,7 +24,7 @@ class EWSItemOperations extends Mixin
         EWSBuilder.$itemIds(builder, opts.itemIds) if opts.itemIds?
 
   getItem: (opts) ->
-    @doSoapRequest @buildGetItem(opts)
+    @doSoapRequest @buildGetItem(opts), 'EWSItemsResponse'
 
   buildCreateItem: (opts={}) ->
     EWSBuilder.build (builder) ->
@@ -35,7 +35,7 @@ class EWSItemOperations extends Mixin
         EWSBuilder.$items(builder, opts.items) if opts.items?
 
   createItem: (opts) ->
-    @doSoapRequest @buildCreateItem(opts)
+    @doSoapRequest @buildCreateItem(opts), 'EWSItemsResponse'
 
   buildCopyOrMoveItem: (nodeName, opts={}) ->
     EWSBuilder.build (builder) ->
@@ -46,10 +46,10 @@ class EWSItemOperations extends Mixin
           EWSBuilder.$returnNewItemIds(builder, opts.returnNewItemIds)
 
   copyItem: (opts) ->
-    @doSoapRequest @buildCopyOrMoveItem('CopyItem', opts)
+    @doSoapRequest @buildCopyOrMoveItem('CopyItem', opts), 'EWSItemsResponse'
 
   moveItem: (opts) ->
-    @doSoapRequest @buildCopyOrMoveItem('MoveItem', opts)
+    @doSoapRequest @buildCopyOrMoveItem('MoveItem', opts), 'EWSItemsResponse'
   # `opts` {Object}
   #   `deleteType` {String} can be 'HardDelete', 'SoftDelete',
   #   'MoveToDeletedItems'
@@ -83,4 +83,4 @@ class EWSItemOperations extends Mixin
         EWSBuilder.$itemChanges(builder, opts.itemChanges)
 
   updateItem: (opts) ->
-    @doSoapRequest @buildUpdateItem(opts)
+    @doSoapRequest @buildUpdateItem(opts), 'EWSItemsResponse'
