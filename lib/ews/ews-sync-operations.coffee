@@ -20,7 +20,8 @@ class EWSSyncOperations extends Mixin
     EWSBuilder.build (builder) ->
       builder.nodeNS NS_MESSAGES, 'SyncFolderHierarchy', (builder) ->
         EWSBuilder.$folderShape(builder, opts.folderShape)
-        EWSBuilder.$syncFolderId(builder, opts.syncFolderId)
+        if opts.syncFolderId
+          EWSBuilder.$syncFolderId(builder, opts.syncFolderId)
         EWSBuilder.$syncState(builder, opts.syncState) if opts.syncState
 
   syncFolderHierarchy: (opts) ->

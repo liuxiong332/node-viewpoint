@@ -61,6 +61,5 @@ class FolderAccessor extends Mixin
   _syncFoldersArgs: (opts) ->
     params =
       folderShape: baseShape: opts.shape ? 'Default'
-      syncFolderId: ROOT_FOLDER_ID
     params.syncFolderId = @_getItemId(opts.parent) if opts.parent
     _.extend params, opts

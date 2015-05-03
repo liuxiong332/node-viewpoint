@@ -74,3 +74,9 @@ describe.skip 'ews operations integration', ->
         .then -> done()
         .catch (err) -> done(err)
       .catch (err) -> done(err)
+
+    it 'syncFolders', (done) ->
+      client.syncFolders().then (res) ->
+        res.syncState().should.ok
+        done()
+      .catch (err) -> done(err)

@@ -4,7 +4,7 @@ Message = require './types/message'
 Folder = require './types/folder'
 Mixin = require 'mixto'
 
-Types = {Item, Message}
+Types = {Item, Message, Folder}
 
 class RootFolder extends Mixin
   constructor: (@rootFolderNode) ->
