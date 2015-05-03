@@ -45,6 +45,9 @@ describe.skip 'ews operations integration', ->
       .then -> done()
       .catch (err) -> done(err)
 
-  # it.only 'syncItems', (done) ->
-  #   client.syncItems({folderId: TRASH_ID, maxReturned: 2}).then (res) ->
-  #     done()
+  it 'syncItems', (done) ->
+    client.syncItems({folderId: TRASH_ID, maxReturned: 2})
+    .then (res) ->
+      res.syncState().should.ok
+      done()
+    .catch (err) -> done(err)

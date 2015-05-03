@@ -2,8 +2,10 @@ EWSItemOperations = require './ews/ews-item-operations'
 EWSFolderOperations = require './ews/ews-folder-operations'
 EWSSyncOperations = require './ews/ews-sync-operations'
 RequestClient = require './http/request-client'
-{EWSResponse} = require './ews-response'
+EWSRes = require './ews-response'
 libxml = require 'libxmljs'
+
+EWSResponse = EWSRes.EWSResponse
 
 class SoapError extends Error
   constructor: ->
@@ -22,9 +24,10 @@ class EWSWebService
   constructor: ->
     RequestClient.apply(this, arguments)
 
-  doSoapRequest: (doc) ->
+  doSoapRequest: (doc, resName) ->
     @send(doc.toString(false)).then (res) ->
-      ewsRes = new EWSResponse libxml.parseXmlString(res.body)
+      Response = if resName then EWSRes[resName] else EWSResponse
+      ewsRes = new Response libxml.parseXmlString(res.body)
       unless ewsRes.isSuccess
         param =
           responseCode: ewsRes.responseCode

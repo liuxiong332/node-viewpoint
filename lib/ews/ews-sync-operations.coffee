@@ -14,7 +14,7 @@ class EWSSyncOperations extends Mixin
           EWSBuilder.$maxChangesReturned(builder, mr)
 
   syncFolderItems: (opts) ->
-    @doSoapRequest @buildSyncFolderItems(opts)
+    @doSoapRequest @buildSyncFolderItems(opts), 'EWSSyncResponse'
 
   buildSyncFolderHierarchy: (opts={}) ->
     EWSBuilder.build (builder) ->
@@ -24,4 +24,4 @@ class EWSSyncOperations extends Mixin
         EWSBuilder.$syncState(builder, opts.syncState) if opts.syncState
 
   syncFolderHierarchy: (opts) ->
-    @doSoapRequest @buildSyncFolderHierarchy(opts)
+    @doSoapRequest @buildSyncFolderHierarchy(opts), 'EWSSyncResponse'
