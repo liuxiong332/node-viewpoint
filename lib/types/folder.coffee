@@ -1,13 +1,12 @@
-{pascalCase} = require 'ews-util'
 TypeMixin = require './type-mixin'
 
+module.exports =
 class Folder
   TypeMixin.includeInto this
-
   constructor: (@node) ->
 
   @addIntTextMethods 'totalCount', 'childFolderCount', 'unreadCount'
-  
-  @addTextMethod 'folderClass', 'displayName'
 
+  @addTextMethods 'folderClass', 'displayName'
+  
   @addAttrMethods 'folderId', 'parentFolderId'

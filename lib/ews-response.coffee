@@ -1,40 +1,47 @@
 {NAMESPACES} = require './ews-ns'
 Item = require './types/item'
 Message = require './types/message'
+Folder = require './types/folder'
 Mixin = require 'mixto'
 
 Types = {Item, Message}
 
-class RootFolder
-  constructor: (@node) ->
+class RootFolder extends Mixin
+  constructor: (@rootFolderNode) ->
 
   totalItemsInView: ->
-    parseInt @node.attrVal('TotalItemsInView')
+    parseInt @rootFolderNode.attrVal('TotalItemsInView')
 
   includesLastItemInRange: ->
-    @node.attrVal('IncludesLastItemInRange') is 'true'
+    @rootFolderNode.attrVal('IncludesLastItemInRange') is 'true'
 
   items: ->
-    itemsNode = @node.get('t:Items', NAMESPACES)
+    itemsNode = @rootFolderNode.get('t:Items', NAMESPACES)
+    resItems = []
     for childNode in itemsNode.childNodes()
       if (Constructor = Types[childNode.name()])?
-        new Constructor(childNode)
+        resItems.push new Constructor(childNode)
+    resItems
 
   folders: ->
-    foldersNode = @node.get('t:Folders', NAMESPACES)
-    for childNode in foldersNode.childNodes()
-      if (Constructor = Types[childNode.name()])?
-        new Constructor(childNode)
+    foldersNode = @rootFolderNode.get('t:Folders', NAMESPACES)
+    new Folder(childNode) for childNode in foldersNode.childNodes()
 
-class Items
-  constructor: (@node) ->
+class Items extends Mixin
+  constructor: (@itemsNode) ->
 
   items: ->
-    for childNode in @node.childNodes()
+    resItems = []
+    for childNode in @itemsNode.childNodes()
       if (Constructor = Types[childNode.name()])?
-        new Constructor(childNode)
+        resItems.push new Constructor(childNode)
+    resItems
 
-ResponseMsgs = {RootFolder, Items, Folders: Items}
+class Folders
+  constructor: (@foldersNode) ->
+
+  folders: ->
+    new Folder(childNode) for childNode in @foldersNode.childNodes()
 
 class ResponseParser extends Mixin
   parseResponse: ->
@@ -47,12 +54,7 @@ class ResponseParser extends Mixin
       @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
     @resMsgNode = _msgNode
 
-class EWSResponse
-  ResponseParser.includeInto this
-
-  constructor: (@doc) ->
-    @parseResponse()
-
+  ResponseMsgs = {RootFolder, Items, Folders}
   _responseNode: (resMsg) ->
     for node in resMsg.childNodes()
       nodeName = node.name()
@@ -64,6 +66,42 @@ class EWSResponse
 
   responses: ->
     @_responseNode resNode for resNode in @resMsgsNode.childNodes()
+
+class EWSResponse
+  ResponseParser.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
+
+class EWSRootFolderResponse
+  ResponseParser.includeInto this
+  RootFolder.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
+    RootFolder.call this, @resMsgNode.get('m:RootFolder', NAMESPACES)
+
+class EWSItemsResponse
+  ResponseParser.includeInto this
+  Items.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
+    Items.call this, @resMsgNode.get('m:Items', NAMESPACES)
+
+class EWSFoldersResponse
+  ResponseParser.includeInto this
+
+  constructor: (@doc) ->
+    @parseResponse()
+    nodes = @resMsgsNode.childNodes()
+    @foldersList = for node in nodes
+      new Folders node.get('m:Folders', NAMESPACES)
+
+  folders: ->
+    res = []
+    res.concat node.folders() for node in @foldersList
+    res
 
 class EWSSyncResponse
   ResponseParser.includeInto this
