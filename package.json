@@ -1,6 +1,6 @@
 {
-  "name": "node-viewpoint",
-  "description": "the exchange API for nodejs module",
+  "name": "viewpoint",
+  "description": "the exchange email API for nodejs module",
   "version": "0.1.0",
   "homepage": "https://github.com/liuxiong332/node-viewpoint",
   "bugs": "https://github.com/liuxiong332/node-viewpoint/issues",
@@ -15,9 +15,8 @@
     "type": "git",
     "url": "https://github.com/liuxiong332/node-viewpoint"
   },
-  "keywords": [],
+  "keywords": ["exchange", 'EWS', 'email'],
   "dependencies": {
-    "debug": "2.1.3",
     "http-ext": "^0.2.16",
     "http-ext-ntlm": "^0.1.3",
     "libxmljs": "^0.13.0",
