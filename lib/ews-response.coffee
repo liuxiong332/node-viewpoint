@@ -100,7 +100,8 @@ class EWSFoldersResponse
 
   folders: ->
     res = []
-    res.concat node.folders() for node in @foldersList
+    for node in @foldersList
+      res = res.concat(node.folders())
     res
 
 class EWSSyncResponse
