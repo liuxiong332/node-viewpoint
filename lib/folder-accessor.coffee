@@ -12,6 +12,7 @@ class FolderAccessor extends Mixin
 
   getFolders: (folderIds, opts={}) ->
     @ews.getFolder @_getFolderArgs(folderIds, opts)
+
   # `opts` {Object}
   #   `shape` {String} the folderShape value, default value `Default`
   #   `parent` {String} or `Object` the folderId value

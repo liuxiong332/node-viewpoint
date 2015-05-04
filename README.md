@@ -7,16 +7,21 @@ the exchange API for nodejs module
 ## Install
 
 ```bash
-$ npm install --save node-viewpoint
+$ npm install --save viewpoint
 ```
 
 
 ## Usage
 
 ```javascript
-var nodeViewpoint = require('node-viewpoint');
-nodeViewpoint(); // "awesome"
+var EWSClient = require('viewpoint');
+var client = new EWSClient(username, password, ewsUrl, config);
+client.syncFolders().then(function(res) {
+  console.log('sync folders successfully!');
+});
 ```
+
+More examples can refer to `examples/` in the source repo.
 
 ## API
 
