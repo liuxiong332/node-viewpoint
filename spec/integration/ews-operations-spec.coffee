@@ -1,6 +1,5 @@
 should = require 'should'
 EWSClient = require '../../lib/ews-client'
-config = require './config.json'
 
 describe.skip 'ews operations integration', ->
 
@@ -8,6 +7,7 @@ describe.skip 'ews operations integration', ->
   client = null
 
   beforeEach ->
+    config = require './config.json'
     opts =
       rejectUnauthorized: false
       proxy: {host: 'localhost', port: 8888}
