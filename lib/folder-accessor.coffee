@@ -21,7 +21,8 @@ class FolderAccessor extends Mixin
     @ews.findFolder @_findFoldersArgs(opts)
 
   createFolders: (names, opts={}) ->
-    @ews.createFolder @_createFoldersArgs(names, opts)
+    args = @_createFoldersArgs(names, opts)
+    @ews.createFolder(args).then (res) -> res.folders()
 
   deleteFolders: (folderIds, deleteType) ->
     deleteType ?= 'HardDelete'
@@ -32,7 +33,7 @@ class FolderAccessor extends Mixin
     params =
       toFolderId: @_getItemId(opts.parent)
       folderIds: @_getItemIds(folderIds)
-    @ews.moveFolder params
+    @ews.moveFolder(params).then (res) -> res.folders()
 
   syncFolders: (opts={}) ->
     @ews.syncFolderHierarchy @_syncFoldersArgs(opts)

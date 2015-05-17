@@ -25,6 +25,9 @@ More examples can refer to `examples/` in the source repo.
 
 ## API
 
+Many API function return the `Promise` object. For simplicity, I will use `Promise(ObjectType)` to represent the Promise object that return the `ObjectType` object. e.g. for function `foo` that return `Promise(Number)`, you can invoke it with
+`foo().then(number) {}`.
+
 ### EWSClient
 
 #### Methods
@@ -35,15 +38,17 @@ More examples can refer to `examples/` in the source repo.
 
   * *folderId*: `String` or `Object.` The `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
 
-  * *return*: `Folder.` The `Folder` object
+  * *return*: `Promise(Folder).` The `Folder` object
 
 * **getFolders**: `function(folderIds, opts).` Get folders by folderIds array
 
   * *folderIds* `Array.` The array of folderId used to get a list of folder
 
-  * *return*: `Array.` Each item is `Folder`
+  * *return*: `Promise(Array).` Each item is `Folder`
 
 * **findFolders**: `function(opts).` Get the folders by the `opts`
+
+  * *return*: `Promise(RootFolder)`
 
 * **createFolders**: `function(names, opts).` Create the folders by the names
 
@@ -85,7 +90,7 @@ More examples can refer to `examples/` in the source repo.
 
 ### RootFolder
 
-**Methods**
+#### Methods
 
 * **totalItemsInView**: `function().` Get the count of return items.
 

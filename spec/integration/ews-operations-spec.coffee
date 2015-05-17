@@ -1,7 +1,7 @@
 should = require 'should'
 EWSClient = require '../../lib/ews-client'
 
-describe 'ews operations integration', ->
+describe.skip 'ews operations integration', ->
 
   TRASH_ID = {id: 'deleteditems', type: 'distinguished'}
   client = null
@@ -61,28 +61,28 @@ describe 'ews operations integration', ->
         done()
       .catch done
 
-    it.skip 'findFolders', (done) ->
+    it 'findFolders', (done) ->
       client.findFolders().then (res) ->
         res.folders().should.ok
         res.totalItemsInView().should.ok
         client.getFolders(res.folders()[0].folderId())
-        .then (res) ->
-          res.folders().length.should.equal 1
+        .then (folders) ->
+          folders.length.should.equal 1
           done()
         .catch (err) -> done(err)
 
-    it.skip 'createFolders', (done) ->
+    it 'createFolders', (done) ->
       client.createFolders(['test3', 'test4'])
-      .then (res) ->
+      .then (folders) ->
         # client.deleteFolders res.
-        res.folders().length.should.equal 2
-        folderIds = res.folders().map (folder) -> folder.folderId()
+        folders.length.should.equal 2
+        folderIds = folders.map (folder) -> folder.folderId()
         client.deleteFolders(folderIds)
         .then -> done()
         .catch (err) -> done(err)
       .catch (err) -> done(err)
 
-    it.skip 'syncFolders', (done) ->
+    it 'syncFolders', (done) ->
       client.syncFolders().then (res) ->
         res.syncState().should.ok
         done()
