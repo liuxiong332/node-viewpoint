@@ -14,7 +14,7 @@ describe.skip 'ews operations integration', ->
       agent: new require('https').Agent({keepAlive: true})
     client = new EWSClient config.username, config.password, config.url, opts
 
-  describe.skip 'items', ->
+  describe 'items', ->
     it 'findItems', (done) ->
       params =
         shape: 'IdOnly'
@@ -26,10 +26,8 @@ describe.skip 'ews operations integration', ->
         Object.keys(itemArray[0].itemId()).should.eql ['id', 'changeKey']
 
         client.getItem(itemArray[0].itemId())
-        .then (res) ->
-          itemInfos = res.items()
-          itemInfos.length.should.equal 1
-          itemInfos[0].itemId().should.eql itemArray[0].itemId()
+        .then (itemInfo) ->
+          itemInfo.itemId().should.eql itemArray[0].itemId()
           done()
         .catch (err) -> done(err)
 
@@ -38,8 +36,7 @@ describe.skip 'ews operations integration', ->
         folderId: TRASH_ID
         items:
           subject: 'Hello, World', body: '<body>Hello</body>'
-      client.saveItems(params).then (res) ->
-        items = res.items()
+      client.saveItems(params).then (items) ->
         items[0].itemId().should.ok
 
         client.deleteItems items[0].itemId()

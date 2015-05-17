@@ -7,19 +7,23 @@ class ItemAccessor extends Mixin
   # `opts` {Object} more options
   #   'shape' {String} baseShape value
   getItem: (itemId, opts={}) ->
-    @ews.getItem @_getItemArgs(itemId, opts)
+    args = @_getItemArgs(itemId, opts)
+    @ews.getItem(args).then (res) -> res.items()[0]
 
   getItems: (itemIds, opts={}) ->
-    @ews.getItem @_getItemArgs(itemIds, opts)
+    args = @_getItemArgs(itemIds, opts)
+    @ews.getItem(args).then (res) -> res.items()
 
   findItems: (opts={}) ->
     @ews.findItem @_findItemsArgs(opts)
 
   copyItems: (items, folder) ->
-    @ews.copyItem @_moveCopyItemsArgs(items, folder)
+    args = @_moveCopyItemsArgs(items, folder)
+    @ews.copyItem(args).then (res) -> res.items()
 
   moveItems: (items, folder) ->
-    @ews.moveItem @_moveCopyItemsArgs(items, folder)
+    args = @_moveCopyItemsArgs(items, folder)
+    @ews.moveItem(args).then (res) -> res.items()
 
   deleteItems: (items, deleteType) ->
     opts =
@@ -28,7 +32,8 @@ class ItemAccessor extends Mixin
     @ews.deleteItem opts
 
   markRead: (items) ->
-    @ews.updateItem @_markReadArgs(items)
+    args = @_markReadArgs(items)
+    @ews.updateItem(args).then (res) -> res.items()
 
   # `opts` {Object}
   #   `folderId` the folder that items saved
@@ -37,7 +42,7 @@ class ItemAccessor extends Mixin
     params = _.clone(opts)
     if opts.folderId
       params.savedItemFolderId = @_getItemId(opts.folderId)
-    @ews.createItem params
+    @ews.createItem(params).then (res) -> res.items()
 
   sendItems: (opts) ->
     if opts.itemIds
