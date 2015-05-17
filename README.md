@@ -25,8 +25,26 @@ More examples can refer to `examples/` in the source repo.
 
 ## API
 
-_(Coming soon)_
+### EWSClient
 
+**Methods**
+*constructor*: `function(username, password, url, options)` constructor function
+
+*getFolder*: `function(folderId, opts)` get the specific folder by folderId
+
+  *folderId*: `String` or `Object` the `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
+
+*getFolders*: `function(folderIds, opts)` get folders by folderIds array
+
+  *folderIds* `Array` the array of folderId used to get a list of folder
+
+*findFolders*: `function(opts)` get the folders by the `opts`
+
+*createFolders*: `function(names, opts)` create the folders by the names
+
+*moveFolders*: `function(folderIds, opts)` move the folders that the id is in the `folderIds`
+
+*syncFolders*: `function(opts)` synchronize the folders
 
 ## Contributing
 
