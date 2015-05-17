@@ -44,7 +44,7 @@ Many API function return the `Promise` object. For simplicity, I will use `Promi
 
   * *folderIds* `Array.` The array of folderId used to get a list of folder
 
-  * *return*: `Promise(Array).` Each item is `Folder`
+  * *return*: `Promise(Array).` Each item is `Folder`.
 
 * **findFolders**: `function(opts).` Get the folders by the `opts`
 
@@ -52,9 +52,15 @@ Many API function return the `Promise` object. For simplicity, I will use `Promi
 
 * **createFolders**: `function(names, opts).` Create the folders by the names
 
-* **moveFolders**: `function(folderIds, opts).` Move the folders that the id is in the `folderIds`
+  * *return*: `Promise(Array).` Each item is `Folder`.
+
+* **moveFolders**: `function(folderIds, opts).` Move the folders that the id is in the `folderIds`.
+
+  * *return*: `Promise(Array).` Each item is `Folder`.
 
 * **syncFolders**: `function(opts).` Synchronize the folders
+
+  * *return*: `Promise(EWSSyncResponse).`
 
 ### Folder
 
@@ -107,6 +113,30 @@ Many API function return the `Promise` object. For simplicity, I will use `Promi
 * **folders**: `function().` Get the child folders of this folder.
 
   * *return*: `Array.` The `Array` of `Folder`.
+
+### EWSSyncResponse
+
+#### Methods
+
+* **syncState**: `function().` Get the current synchronization state.
+
+  * *return*: `String.`
+
+* **includesLastItemInRange**: `function().` Get whether the items include the last item.
+
+  * *return*: `Bool`
+
+* **creates**: `function().` Get the created items.
+
+  * *return*: `Array.` Each item is `Message`.
+
+* **updates**: `function().` Get the updated items.
+
+  * *return*: `Array.` Each item is `Message`.
+
+* **deletes**: `function().` Get the deleted items.
+
+  * *return*: `Array.` Each item is `Message` that be deleted.
 
 ## Contributing
 
