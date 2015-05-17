@@ -29,49 +29,79 @@ More examples can refer to `examples/` in the source repo.
 
 #### Methods
 
-**constructor**: `function(username, password, url, options)` constructor function
+* **constructor**: `function(username, password, url, options).` Constructor function
 
-**getFolder**: `function(folderId, opts)`. get the specific folder by folderId
+* **getFolder**: `function(folderId, opts).` Get the specific folder by folderId
 
-  *folderId*: `String` or `Object`. the `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
+  * *folderId*: `String` or `Object.` The `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
 
-  *return*: `Folder`. the `Folder` object
+  * *return*: `Folder.` The `Folder` object
 
-**getFolders**: `function(folderIds, opts)` get folders by folderIds array
+* **getFolders**: `function(folderIds, opts).` Get folders by folderIds array
 
-  *folderIds* `Array` the array of folderId used to get a list of folder
+  * *folderIds* `Array.` The array of folderId used to get a list of folder
 
-  *return*: `Array` each item is `Folder`
+  * *return*: `Array.` Each item is `Folder`
 
-**findFolders**: `function(opts)` get the folders by the `opts`
+* **findFolders**: `function(opts).` Get the folders by the `opts`
 
-**createFolders**: `function(names, opts)` create the folders by the names
+* **createFolders**: `function(names, opts).` Create the folders by the names
 
-**moveFolders**: `function(folderIds, opts)` move the folders that the id is in the `folderIds`
+* **moveFolders**: `function(folderIds, opts).` Move the folders that the id is in the `folderIds`
 
-**syncFolders**: `function(opts)` synchronize the folders
+* **syncFolders**: `function(opts).` Synchronize the folders
 
 ### Folder
 
 #### Methods
 
-**totalCount**: `Number` the total count of items
+* **totalCount**: `function().` The total count of items
 
-**childFolderCount**: `Number` the count of child folders
+  * *return*: `Number`
 
-**unreadCount**: `Number` the count of unread items
+* **childFolderCount**: `function().` The count of child folders
 
-**folderClass**: the folder class such as 'IPF'
+  * *return*: `Number`
 
-**displayName**: the display name
+* **unreadCount**: `function().` The count of unread items
 
-**folderId**: get folder id object
+  * *return*: `Number`
 
-**parentFolderId**: get parent folder id object
+* **folderClass**: `function().` The folder class such as 'IPF'
+
+  * *return*: `String`
+
+* **displayName**: `function().` The display name
+
+  * *return*: `String`
+
+* **folderId**: `function().` Get folder id object
+
+  * *return*: `Object`
+
+* **parentFolderId**: `function().` Get parent folder id object
+
+  * *return*: `Object`
 
 ### RootFolder
 
 **Methods**
+
+* **totalItemsInView**: `function().` Get the count of return items.
+
+  * *return*: `Number.`
+
+* **includesLastItemInRange**: `function().` Get whether or not the last item is included.
+
+  * *return*: `Bool`
+
+* **items**: `function().` Get the items of folder.
+
+  * *return*: `Array.` The `Array` of `Message`.
+
+* **folders**: `function().` Get the child folders of this folder.
+
+  * *return*: `Array.` The `Array` of `Folder`.
 
 ## Contributing
 
