@@ -1,7 +1,7 @@
 should = require 'should'
 EWSClient = require '../../lib/ews-client'
 
-describe.skip 'ews operations integration', ->
+describe 'ews operations integration', ->
 
   TRASH_ID = {id: 'deleteditems', type: 'distinguished'}
   client = null
@@ -10,11 +10,11 @@ describe.skip 'ews operations integration', ->
     config = require './config.json'
     opts =
       rejectUnauthorized: false
-      proxy: {host: 'localhost', port: 8888}
-      agent: new require('http').Agent({keepAlive: true})
+      # proxy: {host: 'localhost', port: 8888}
+      agent: new require('https').Agent({keepAlive: true})
     client = new EWSClient config.username, config.password, config.url, opts
 
-  describe 'items', ->
+  describe.skip 'items', ->
     it 'findItems', (done) ->
       params =
         shape: 'IdOnly'
@@ -54,7 +54,14 @@ describe.skip 'ews operations integration', ->
       .catch (err) -> done(err)
 
   describe 'folders', ->
-    it 'findFolders', (done) ->
+    it 'getFolders', (done) ->
+      folderId = {id: 'inbox', type: 'distinguished'}
+      client.getFolder(folderId).then (folder) ->
+        folder.folderId.should.ok
+        done()
+      .catch done
+
+    it.skip 'findFolders', (done) ->
       client.findFolders().then (res) ->
         res.folders().should.ok
         res.totalItemsInView().should.ok
@@ -64,7 +71,7 @@ describe.skip 'ews operations integration', ->
           done()
         .catch (err) -> done(err)
 
-    it 'createFolders', (done) ->
+    it.skip 'createFolders', (done) ->
       client.createFolders(['test3', 'test4'])
       .then (res) ->
         # client.deleteFolders res.
@@ -75,7 +82,7 @@ describe.skip 'ews operations integration', ->
         .catch (err) -> done(err)
       .catch (err) -> done(err)
 
-    it 'syncFolders', (done) ->
+    it.skip 'syncFolders', (done) ->
       client.syncFolders().then (res) ->
         res.syncState().should.ok
         done()

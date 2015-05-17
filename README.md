@@ -27,24 +27,51 @@ More examples can refer to `examples/` in the source repo.
 
 ### EWSClient
 
-**Methods**
-*constructor*: `function(username, password, url, options)` constructor function
+#### Methods
 
-*getFolder*: `function(folderId, opts)` get the specific folder by folderId
+**constructor**: `function(username, password, url, options)` constructor function
 
-  *folderId*: `String` or `Object` the `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
+**getFolder**: `function(folderId, opts)`. get the specific folder by folderId
 
-*getFolders*: `function(folderIds, opts)` get folders by folderIds array
+  *folderId*: `String` or `Object`. the `folderId` can be like <id> or {id: <id>, changeKey: <key>}. If you need distinguished id, then you should make `folderId` like {id: <id>, type: 'distinguished'}
+
+  *return*: `Folder`. the `Folder` object
+
+**getFolders**: `function(folderIds, opts)` get folders by folderIds array
 
   *folderIds* `Array` the array of folderId used to get a list of folder
 
-*findFolders*: `function(opts)` get the folders by the `opts`
+  *return*: `Array` each item is `Folder`
 
-*createFolders*: `function(names, opts)` create the folders by the names
+**findFolders**: `function(opts)` get the folders by the `opts`
 
-*moveFolders*: `function(folderIds, opts)` move the folders that the id is in the `folderIds`
+**createFolders**: `function(names, opts)` create the folders by the names
 
-*syncFolders*: `function(opts)` synchronize the folders
+**moveFolders**: `function(folderIds, opts)` move the folders that the id is in the `folderIds`
+
+**syncFolders**: `function(opts)` synchronize the folders
+
+### Folder
+
+#### Methods
+
+**totalCount**: `Number` the total count of items
+
+**childFolderCount**: `Number` the count of child folders
+
+**unreadCount**: `Number` the count of unread items
+
+**folderClass**: the folder class such as 'IPF'
+
+**displayName**: the display name
+
+**folderId**: get folder id object
+
+**parentFolderId**: get parent folder id object
+
+### RootFolder
+
+**Methods**
 
 ## Contributing
 

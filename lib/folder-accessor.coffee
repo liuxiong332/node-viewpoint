@@ -8,10 +8,11 @@ class FolderAccessor extends Mixin
   #   'shape' {String} baseShape value
   getFolder: (folderId, opts={}) ->
     args = @_getFolderArgs(folderId, opts)
-    @ews.getFolder(args).then (responses) -> responses[0]
+    @ews.getFolder(args).then (res) -> res.folders()?[0]
 
   getFolders: (folderIds, opts={}) ->
-    @ews.getFolder @_getFolderArgs(folderIds, opts)
+    args = @_getFolderArgs(folderIds, opts)
+    @ews.getFolder(args).then (res) -> res.folders()
 
   # `opts` {Object}
   #   `shape` {String} the folderShape value, default value `Default`
