@@ -62,6 +62,38 @@ Many API function return the `Promise` object. For simplicity, I will use `Promi
 
   * *return*: `Promise(EWSSyncResponse).`
 
+* **getItem**: `function(itemId, opts).` Get the message by the `itemId`.
+
+  * *itemId*: `String` or `Object.` The item id is like `{id: <id>}` or `<id>`.
+
+  * *return*: `Promise(Item)` or `Promise(Message)`.
+
+* **getItems**: `function(itemIds).` Get the messages by itemIds.
+
+  * *itemIds*: `Array.` Each item is `String` or `Object`.
+
+  * *return*: `Promise(Array).` Each item is `Message`.
+
+* **findItems**: `function(opts).` Get the information of items that match the opts.
+
+* **deleteItems**: `function(items).` Delete the specific items.
+
+* **moveItems**: `function(items, folder).` Move the items to the destination folder.
+
+  * *folder*: `String` or `Object.` The destination folder id.
+
+* **copyItems**: `function(items, folder).` Copy the items to the destination folder.
+
+* **saveItems**: `function(opts).` Save items in the specific folder.
+
+* **sendItems**: `function(opts).` Send items to destination mailbox.
+
+* **sendAndSaveItems**: `function(opts).` Send items to destination mailbox and save to the specific folder.
+
+* **markRead**: `function(items).` Mark the items to have read.
+
+  * *items*: `Array` or `Object`. The Array of itemid or itemid.
+
 ### Folder
 
 #### Methods
