@@ -38,6 +38,14 @@ class FolderAccessor extends Mixin
   syncFolders: (opts={}) ->
     @ews.syncFolderHierarchy @_syncFoldersArgs(opts)
 
+  syncFoldersWithParent: (syncState) ->
+    opts =
+      syncState: syncState
+      folderShape:
+        baseShape: 'Default'
+        additionalProperties: 'folder:ParentFolderId'
+    @ews.syncFolderHierarchy opts
+
   # private methods
   _getFolderArgs: (folderId, opts) ->
     params =

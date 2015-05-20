@@ -60,6 +60,16 @@ Many API function return the `Promise` object. For simplicity, I will use `Promi
 
 * **syncFolders**: `function(opts).` Synchronize the folders
 
+  * *opts*: `Object.`
+
+    * *syncState*: `String.` It represent the folders synchronization state.
+
+    * *folderShape*: `Object.` The option represent what to return from server. It can like `{baseShape: 'Default', additionalProperties: 'item:ParentFolderId'`.
+
+  * *return*: `Promise(EWSSyncResponse).`
+
+* **syncFoldersWithParent**: `function(syncState). ` Synchronize the folders just like `syncFolders` but also the `parentFolderId` variable will return.
+
   * *return*: `Promise(EWSSyncResponse).`
 
 * **getItem**: `function(itemId, opts).` Get the message by the `itemId`.
