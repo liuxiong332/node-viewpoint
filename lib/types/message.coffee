@@ -34,6 +34,7 @@ class Message extends Item
   @addMailboxListMethods 'toRecipients', 'ccRecipients', 'bccRecipients',
     'replyTo'
   @addTextMethods 'conversationTopic', 'conversationIndex', 'internetMessageId',
-    'references'
+    'references', 'dateTimeSent'
+
   @addBoolTextMethods 'isReadReceiptRequested', 'isDeliveryReceiptRequested',
     'isRead', 'isResponseRequested'
