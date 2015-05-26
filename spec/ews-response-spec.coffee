@@ -7,12 +7,19 @@ EWSBuilder = require '../lib/ews-builder'
 NS_T = NS.NS_TYPES
 NS_M = NS.NS_MESSAGES
 
+buildResponse = (callback) ->
+  NS_SOAP = NS.NS_SOAP
+  builder = new Builder
+  builder.defineNS NS.NAMESPACES
+
+  builder.rootNS NS_SOAP, 'Envelope', (builder) ->
+    builder.nodeNS NS_SOAP, 'Body', (builder) ->
+      builder.nodeNS NS_M, 'Response', (builder) ->
+        builder.nodeNS NS_M, 'ResponseMessages', callback
+
 describe 'EWSResponse', ->
   buildRootFolder = (callback) ->
-    builder = new Builder
-    builder.defineNS NS.NAMESPACES
-
-    builder.rootNS NS_M, 'ResponseMessages', (builder) ->
+    buildResponse (builder) ->
       params = {ResponseClass: 'Success'}
       builder.nodeNS NS_M, 'FindItemResponseMessage', params, (builder) ->
         builder.nodeNS NS_M, 'ResponseCode', 'NoError'
@@ -42,10 +49,7 @@ describe 'EWSResponse', ->
 
 describe 'EWSSyncResponse', ->
   buildSyncResponse = ->
-    builder = new Builder
-    builder.defineNS NS.NAMESPACES
-
-    builder.rootNS NS_M, 'ResponseMessages', (builder) ->
+    buildResponse (builder) ->
       params = ResponseClass: 'Success'
       builder.nodeNS NS_M, 'SyncResponseMessage', params, (builder) ->
         builder.nodeNS NS_M, 'ResponseCode', 'NoError'
