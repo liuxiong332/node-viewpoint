@@ -96,7 +96,7 @@ class ItemAccessor extends Mixin
 
   _syncItemsArgs: (opts) ->
     params =
-      itemShape: {baseShape: opts.shape ? 'IdOnly'}
+      itemShape: {baseShape: opts.shape ? 'Default'}
       syncFolderId: @_getItemId(opts.folderId)
     params.maxChangesReturned = opts.maxReturned if opts.maxReturned
     _.extend params, opts

@@ -1,7 +1,7 @@
 {
   "name": "viewpoint",
   "description": "the exchange email API for nodejs module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/liuxiong332/node-viewpoint",
   "bugs": "https://github.com/liuxiong332/node-viewpoint/issues",
   "license": "MIT",

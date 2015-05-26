@@ -45,13 +45,14 @@ class Folders
 
 class ResponseParser extends Mixin
   parseResponse: ->
-    @resMsgsNode = @doc.get('//m:ResponseMessages', NAMESPACES)
+    path = '/soap:Envelope/soap:Body/*/m:ResponseMessages'
+    @resMsgsNode = @doc.get(path, NAMESPACES)
 
     _msgNode = @resMsgsNode.child(0)
     @isSuccess = _msgNode.attrVal('ResponseClass') is 'Success'
     unless @isSuccess
-      @responseCode = _msgNode.get('/m:ResponseCode', NAMESPACES)
-      @messageText = _msgNode.get('/m:MessageText', NAMESPACES)
+      @responseCode = _msgNode.get('m:ResponseCode', NAMESPACES)
+      @messageText = _msgNode.get('m:MessageText', NAMESPACES)
     @resMsgNode = _msgNode
 
   ResponseMsgs = {RootFolder, Items, Folders}
