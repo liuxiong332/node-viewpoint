@@ -212,24 +212,31 @@ class EWSBuilder
       @$baseShape(builder, param.baseShape)
       @$additionalProperties(builder, ap) if (ap = param.additionalProperties)?
 
-  @_addItemMethods 'appendToItemField', 'setItemField', 'deleteItemField'
+  @_addItemMethods 'appendToItemField', 'setItemField', 'deleteItemField',
+    'setFolderField'
 
+  toArray = (item) ->
+    if Array.isArray(item) then item else [item]
   # `param` {Object}
   #   `appendFields` {Array} each item is like {fieldURI: <uri>, item: <item>}
   #   `setFields` {Array}
   #   `deleteFields` {Array}
   @$updates: (builder, param) ->
-    {appendFields, setFields, deleteFields} = param
+    {appendFields, setFields, deleteFields, setFolderFields} = param
     builder.nodeNS NS_T, 'Updates', (builder) =>
       if appendFields
-        appendFields = [appendFields] unless Array.isArray(appendFields)
+        appendFields = toArray(appendFields)
         @$appendToItemField(builder, field) for field in appendFields
       if setFields
-        setFields = [setFields] unless Array.isArray(setFields)
+        setFields = toArray(setFields)
         @$setItemField(builder, field) for field in setFields
       if deleteFields
-        deleteFields = [deleteFields] unless Array.isArray(deleteFields)
+        deleteFields = toArray(deleteFields)
         @$deleteItemField(builder, field) for field in deleteFields
+      if setFolderFields
+        setFolderFields = toArray(setFolderFields)
+        @$setFolderField(builder, field) for field in setFolderFields
+
 
   @$itemChange: (builder, param) ->
     builder.nodeNS NS_T, 'ItemChange', (builder) =>
@@ -240,6 +247,16 @@ class EWSBuilder
     builder.nodeNS NS_M, 'ItemChanges', (builder) =>
       params = [params] unless Array.isArray(params)
       @$itemChange(builder, change) for change in params
+
+  @$folderChange: (builder, param) ->
+    builder.nodeNS NS_T, 'FolderChange', (builder) =>
+      @$folderId(builder, param.folderId)
+      @$updates(builder, param)
+
+  @$folderChanges: (builder, params) ->
+    builder.nodeNS NS_M, 'FolderChanges', (builder) =>
+      params = [params] unless Array.isArray(params)
+      @$folderChange(builder, change) for change in params
 
   @_addTextMethods 'folderClass', 'displayName', 'totalCount',
     'childFolderCount', 'unreadCount'

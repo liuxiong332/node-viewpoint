@@ -53,3 +53,11 @@ class EWSFolderOperations extends Mixin
 
   moveFolder: (opts) ->
     @doSoapRequest @buildMoveFolder(opts), 'EWSFoldersResponse'
+
+  buildUpdateFolder: (opts={}) ->
+    EWSBuilder.build (builder) ->
+      builder.nodeNS NS_MESSAGES, 'UpdateFolder', (builder) ->
+        EWSBuilder.$folderChanges(builder, opts)
+
+  updateFolder: (opts) ->
+    @doSoapRequest @buildUpdateFolder(opts), 'EWSFoldersResponse'

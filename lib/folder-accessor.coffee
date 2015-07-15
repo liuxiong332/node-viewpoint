@@ -1,5 +1,6 @@
 Mixin = require 'mixto'
 _ = require 'underscore'
+{pascalCase} = require './ews-util'
 
 module.exports =
 class FolderAccessor extends Mixin
@@ -34,6 +35,15 @@ class FolderAccessor extends Mixin
       toFolderId: @_getItemId(opts.parent)
       folderIds: @_getItemIds(folderIds)
     @ews.moveFolder(params).then (res) -> res.folders()
+
+  updateFolder: (folderId, changes) ->
+    params =
+      folderId: folderId
+      setFields: []
+    for name, val of changes
+      params.setFields.push
+        fieldURI: "folder:#{pascalCase(name)}", folder: {name: val}
+    @ews.updateFolder(params).then (res) -> res.folders()?[0]
 
   syncFolders: (opts={}) ->
     @ews.syncFolderHierarchy @_syncFoldersArgs(opts)
