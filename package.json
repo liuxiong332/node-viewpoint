@@ -1,9 +1,9 @@
 {
   "name": "viewpoint",
   "description": "the exchange email API for nodejs module",
-  "version": "0.1.6",
-  "homepage": "https://github.com/liuxiong332/node-viewpoint",
-  "bugs": "https://github.com/liuxiong332/node-viewpoint/issues",
+  "version": "0.1.7",
+  "homepage": "https://github.com/xmail-client/node-viewpoint",
+  "bugs": "https://github.com/xmail-client/node-viewpoint/issues",
   "license": "MIT",
   "main": "dist/ews-client.js",
   "author": {
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/liuxiong332/node-viewpoint"
+    "url": "https://github.com/xmail-client/node-viewpoint"
   },
   "keywords": [
     "exchange",

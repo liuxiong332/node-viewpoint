@@ -4,6 +4,8 @@ var gulp   = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var del = require('del');
 
+require('coffee-script/register');
+
 var CI = process.env.CI === 'true';
 
 var paths = {
@@ -26,20 +28,9 @@ gulp.task('lint', function () {
     .pipe(plugins.coffeelint.reporter());
 });
 
-gulp.task('istanbul', function (cb) {
-  gulp.src(paths.coffee)
-    .pipe(plugins.coffeeIstanbul()) // Covering files
-    .pipe(plugins.coffeeIstanbul.hookRequire()) // Force `require` to return covered files
-    .on('finish', function () {
-      gulp.src(paths.tests)
-        .pipe(plugins.plumber(plumberConf))
-        .pipe(plugins.mocha({reporter: CI ? 'spec' : 'nyan', timeout: '5s'}))
-        .pipe(plugins.coffeeIstanbul.writeReports()) // Creating the reports after tests runned
-        .on('finish', function() {
-          process.chdir(__dirname);
-          cb();
-        });
-    });
+gulp.task('mocha', function (cb) {
+  gulp.src(paths.tests)
+    .pipe(plugins.mocha({reporter: CI ? 'spec' : 'nyan', timeout: '5s'}))
 });
 
 gulp.task('bump', ['test'], function () {
@@ -54,7 +45,7 @@ gulp.task('watch', ['test'], function () {
   gulp.watch(paths.watch, ['test']);
 });
 
-gulp.task('test', ['lint', 'istanbul']);
+gulp.task('test', ['lint', 'mocha']);
 
 gulp.task('release', ['bump']);
 

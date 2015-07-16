@@ -70,3 +70,18 @@ describe 'EWSFolderOperations', ->
     folderNode = doc.get('//m:MoveFolder', NAMESPACES)
     folderNode.get('m:ToFolderId', NAMESPACES).should.ok
     folderNode.get('m:FolderIds', NAMESPACES).should.ok
+
+  it 'buildUpdateFolder', ->
+    operation = new EWSFolderOperations
+    opts =
+      folderId: id: 'ID'
+      setFolderFields: [
+        fieldURI: 'folder:DisplayName', folder: {displayName: 'name'}
+      ]
+    doc = operation.buildUpdateFolder opts
+
+    path = '//m:UpdateFolder/m:FolderChanges/t:FolderChange'
+    folderChangeNode = doc.get(path, NAMESPACES)
+    folderChangeNode.get('t:FolderId', NAMESPACES).attrVal('Id').should.eql 'ID'
+    path = 't:Updates/t:SetFolderField/t:Folder/t:DisplayName'
+    folderChangeNode.get(path, NAMESPACES).text().should.eql 'name'

@@ -31,3 +31,12 @@ describe 'FolderAccessor', ->
     res = accessor._syncFoldersArgs {shape: 'IdOnly', parent: 'ID'}
     res.folderShape.baseShape.should.equal 'IdOnly'
     res.syncFolderId.should.eql {id: 'ID'}
+
+  it.only '_updateFolderArgs', ->
+    accessor = new FolderAccessor
+    ItemAccessor.extend accessor
+    params = accessor._updateFolderArgs('ID', {displayName: 'DD'})
+    params.folderId.id.should.eql 'ID'
+    folderField = params.setFolderFields[0]
+    folderField.fieldURI = 'folder:DisplayName'
+    folderField.folder.displayName.should.equal 'DD'

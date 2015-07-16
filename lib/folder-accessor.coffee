@@ -37,12 +37,7 @@ class FolderAccessor extends Mixin
     @ews.moveFolder(params).then (res) -> res.folders()
 
   updateFolder: (folderId, changes) ->
-    params =
-      folderId: folderId
-      setFields: []
-    for name, val of changes
-      params.setFields.push
-        fieldURI: "folder:#{pascalCase(name)}", folder: {name: val}
+    params = @_updateFolderArgs(folderId, changes)
     @ews.updateFolder(params).then (res) -> res.folders()?[0]
 
   syncFolders: (opts={}) ->
@@ -84,3 +79,12 @@ class FolderAccessor extends Mixin
       folderShape: baseShape: opts.shape ? 'Default'
     params.syncFolderId = @_getItemId(opts.parent) if opts.parent
     _.extend params, opts
+
+  _updateFolderArgs: (folderId, changes) ->
+    params =
+      folderId: @_getItemId(folderId)
+      setFolderFields: []
+    for name, val of changes
+      params.setFolderFields.push
+        fieldURI: "folder:#{pascalCase(name)}", folder: {"#{name}": val}
+    params
