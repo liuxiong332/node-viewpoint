@@ -3,8 +3,8 @@ var config = require('./config.json');
 
 var serviceOptions = {
   rejectUnauthorized: false,
-  proxy: {host: 'localhost', port: 8888},
-  agent: new require('http').Agent({keepAlive: true})
+  // proxy: {host: 'localhost', port: 8888},
+  agent: new require('https').Agent({keepAlive: true})
 };
 
 var client = new EWSClient(config.username, config.password, config.url,
@@ -22,5 +22,5 @@ client.findItems({
   });
   console.log('Done');
 }).catch(function(err) {
-  throw err;
+  console.log('err', err);
 });

@@ -32,7 +32,7 @@ describe 'FolderAccessor', ->
     res.folderShape.baseShape.should.equal 'IdOnly'
     res.syncFolderId.should.eql {id: 'ID'}
 
-  it.only '_updateFolderArgs', ->
+  it '_updateFolderArgs', ->
     accessor = new FolderAccessor
     ItemAccessor.extend accessor
     params = accessor._updateFolderArgs('ID', {displayName: 'DD'})
